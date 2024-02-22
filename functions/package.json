@@ -1,7 +1,7 @@
 {
-  "name": "greet-the-world",
-  "description": "Greet the world",
+  "name": "auto-stop-firebase-ext",
   "main": "index.js",
+  "type": "module",
   "dependencies": {
     "firebase-admin": "^11.5.0",
     "firebase-functions": "^4.2.0"

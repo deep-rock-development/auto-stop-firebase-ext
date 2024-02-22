@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "source": "functions"
+  },
+  "extensions": {
+    "auto-stop-firebase-ext": "../"
+  },
+  "database": {
+    "rules": "database.rules.json"
+  }
+}
