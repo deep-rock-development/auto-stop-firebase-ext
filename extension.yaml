@@ -51,7 +51,15 @@ roles:
 # In the `resources` field, list each of your extension's functions, including the trigger for each function.
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#resources-field
 resources:
-  - name: onInstallFunction
+  - name: onInstallExtension
+    type: firebaseextensions.v1beta.function
+    description: >-
+      Creates the resources necessary for the extension to operate.
+    properties:
+      runtime: nodejs18
+      location: ${LOCATION}
+      taskQueueTrigger: {}
+  - name: onUpdateExtension
     type: firebaseextensions.v1beta.function
     description: >-
       Creates the resources necessary for the extension to operate.
@@ -79,29 +87,29 @@ params:
     type: STRING
     default: ext-trigger-auto-stop
     required: true
-  - param: BUDGET_NAME
-    label: Name of the budget
-    description: The name of the budget that will trigger the shutdown notification
-    type: STRING
-    default: ext-budget-trigger-auto-stop
-    required: true
-  - param: BUDGET_CURRENCY
-    label: Budget currency
-    description: Your currency, generally USD, for the budget
-    type: STRING
-    default: USD
-    required: true
-  - param: BUDGET_AMOUNT
-    label: Dollar amount of budget
-    description: The amount of currency you want to set your budget to (with respect to the threshold)
-    type: STRING
-    default: 100
-    required: true
+  # - param: BUDGET_NAME
+  #   label: Name of the budget
+  #   description: The name of the budget that will trigger the shutdown notification
+  #   type: STRING
+  #   default: ext-budget-trigger-auto-stop
+  #   required: true
+  # - param: BUDGET_CURRENCY
+  #   label: Budget currency
+  #   description: Your currency, generally USD, for the budget
+  #   type: STRING
+  #   default: USD
+  #   required: true
+  # - param: BUDGET_AMOUNT
+  #   label: Dollar amount of budget
+  #   description: The amount of currency you want to set your budget to (with respect to the threshold)
+  #   type: STRING
+  #   default: 100
+  #   required: true
   - param: BUDGET_STOP_THRESHOLD_PERCENT
     label: Percent threshold for shutdown
     description: The percent threshold of your budget that will trigger the shutdown notification
     type: STRING
-    default: 100
+    default: 1.0
     required: true
   - param: LOCATION
     label: Cloud Functions Location
@@ -123,11 +131,11 @@ params:
 
 lifecycleEvents:
   onInstall:
-    function: onInstallFunction
+    function: onInstallExtension
     processingMessage: Creating extension resources
   onUpdate:
-    function: onInstallFunction
-    processingMessage: Describes the task being completed
+    function: onUpdateExtension
+    processingMessage: Update extension resources
   # onUpdate:
   #   function: myOtherTaskFunction
   #   processingMessage: Setting up your extension
