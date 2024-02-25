@@ -34,12 +34,19 @@ apis:
     reason: Required for publishing and subscribing to budget alert messages.
   - apiName: cloudfunctions.googleapis.com
     reason: Necessary to deploy and execute functions in response to Pub/Sub messages.
+  - apiName: billingbudgets.googleapis.com
+    reason: Necessary to create and manage budgets.
+
 
 # In a `roles` field, list any IAM access roles required for your extension to operate.
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#roles-field
-# roles:
-#   - role: firebasedatabase.admin
-#     reason: Allows the extension to write to RTDB.
+roles:
+  - role: pubsub.editor
+    reason: Create topics
+  - role: pubsub.publisher
+    reason: Publish to topics
+  - role: pubsub.subscriber
+    reason: subscribe to a topic
 
 # In the `resources` field, list each of your extension's functions, including the trigger for each function.
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#resources-field
@@ -60,7 +67,7 @@ resources:
       runtime: nodejs18
       location: ${LOCATION}
       eventTrigger:
-        eventType: google.cloud.pubsub.topic.v1.messagePublished
+        eventType: google.pubsub.topic.publish
         resource: projects/${PROJECT_ID}/topics/${TOPIC_NAME}
 
 # In the `params` field, set up your extension's user-configured parameters.
@@ -72,7 +79,30 @@ params:
     type: STRING
     default: ext-trigger-auto-stop
     required: true
-
+  - param: BUDGET_NAME
+    label: Name of the budget
+    description: The name of the budget that will trigger the shutdown notification
+    type: STRING
+    default: ext-budget-trigger-auto-stop
+    required: true
+  - param: BUDGET_CURRENCY
+    label: Budget currency
+    description: Your currency, generally USD, for the budget
+    type: STRING
+    default: USD
+    required: true
+  - param: BUDGET_AMOUNT
+    label: Dollar amount of budget
+    description: The amount of currency you want to set your budget to (with respect to the threshold)
+    type: STRING
+    default: 100
+    required: true
+  - param: BUDGET_STOP_THRESHOLD_PERCENT
+    label: Percent threshold for shutdown
+    description: The percent threshold of your budget that will trigger the shutdown notification
+    type: STRING
+    default: 100
+    required: true
   - param: LOCATION
     label: Cloud Functions Location
     description: The location where the Cloud Functions will be deployed.
@@ -95,6 +125,9 @@ lifecycleEvents:
   onInstall:
     function: onInstallFunction
     processingMessage: Creating extension resources
+  onUpdate:
+    function: onInstallFunction
+    processingMessage: Describes the task being completed
   # onUpdate:
   #   function: myOtherTaskFunction
   #   processingMessage: Setting up your extension

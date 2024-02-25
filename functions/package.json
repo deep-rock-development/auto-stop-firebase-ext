@@ -3,6 +3,7 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
+    "@google-cloud/billing": "^4.3.0",
     "@google-cloud/billing-budgets": "^5.2.0",
     "@google-cloud/functions-framework": "^3.3.0",
     "@google-cloud/pubsub": "^4.3.2",
@@ -11,10 +12,6 @@
     "firebase-functions": "^4.7.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.9",
-    "axios": "^1.3.2",
-    "babel-jest": "^29.7.0",
-    "chai": "^4.3.7",
     "eslint": "^8.15.1",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",

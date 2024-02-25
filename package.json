@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@google-cloud/billing-budgets": "^5.2.0",
-    "@google-cloud/pubsub": "^4.3.2"
-  }
-}

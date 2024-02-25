@@ -1,7 +1,27 @@
-import BudgetServiceClient from "@google-cloud/billing-budgets";
+import { BudgetServiceClient } from "@google-cloud/billing-budgets";
+import { CloudBillingClient } from "@google-cloud/billing";
 
 // Creates a budget client
 const client = new BudgetServiceClient();
+
+//Creates billing client
+const billingClient = new CloudBillingClient();
+
+export const getBillingAccountId = async (projectId) => {
+  const [billingInfo] = await billingClient.getProjectBillingInfo({
+    name: `projects/${projectId}`,
+  });
+  return billingInfo.billingAccountName.split("/").pop();
+};
+
+export const findBudgetByName = async (billingAccountId, budgetName) => {
+  const parent = `billingAccounts/${billingAccountId}`;
+  const [budgets] = await client.listBudgets({ parent });
+  const foundBudget = budgets.find(
+    (budget) => budget.displayName === budgetName
+  );
+  return foundBudget; // This will be undefined if no budget with the given name is found
+};
 
 export const createBudget = async (
   billingAccountId,
@@ -14,6 +34,7 @@ export const createBudget = async (
 ) => {
   // Creates a budget
 
+  console.log(`🚨 Creating Budget for ${billingAccountId} 🚨`);
   const [budget] = await client.createBudget({
     parent: client.billingAccountPath(billingAccountId),
     budget: {
@@ -28,7 +49,7 @@ export const createBudget = async (
         projects: [`projects/${projectId}`],
       },
       thresholdRules: [
-        { thresholdPercent: stopThreshold }, // Notify at 90% spend
+        { thresholdPercent: stopThreshold }, // Notify at X% spend
       ],
       notificationsRule: {
         pubsubTopic: `projects/${projectId}/topics/${topicName}`, // Replace with your Pub/Sub topic
@@ -39,4 +60,5 @@ export const createBudget = async (
   });
 
   console.log(`✅ Budget created: ${budget.name}`);
+  return budget;
 };
