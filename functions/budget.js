@@ -62,3 +62,18 @@ export const createBudget = async (
   console.log(`✅ Budget created: ${budget.name}`);
   return budget;
 };
+
+export const disableBillingForProject = async (projectId) => {
+  console.log(`🚨📢 Disabling billing for ${projectId}...`);
+  const projectName = `projects/${projectId}`;
+  const billingInfo = {
+    name: projectName,
+    billingAccountName: "", // An empty string disables billing
+  };
+
+  await billingClient.updateProjectBillingInfo({
+    name: projectName,
+    projectBillingInfo: billingInfo,
+  });
+  console.log(`🚨📢 Billing disabled for ${projectId}`);
+};

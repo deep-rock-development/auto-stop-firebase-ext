@@ -8,6 +8,9 @@ import {
   getBillingAccountId,
   findBudgetByName,
 } from "./budget.js";
+import { disableService } from "./services.js";
+
+//------------------------------------------------//
 
 // Initialize the Firebase Admin SDK
 initializeApp();
