@@ -4,6 +4,15 @@ import { PubSub } from "@google-cloud/pubsub";
 const pubsub = new PubSub();
 
 export const createTopic = async (topicName) => {
-  await pubsub.createTopic(topicName);
-  console.log(`✅ Topic ${topicName} created.`);
+  try {
+    await pubsub.createTopic(topicName);
+    console.log(`✅ Topic ${topicName} created.`);
+  } catch (error) {
+    if (error.code === 6) {
+      console.log(`ℹ️ Topic ${topicName} already exists.`);
+    } else {
+      console.error(`❌ Failed to create topic ${topicName}:`, error);
+      throw error; // Rethrow if you want to escalate the error
+    }
+  }
 };
