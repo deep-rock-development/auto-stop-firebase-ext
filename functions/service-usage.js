@@ -1,4 +1,4 @@
-const { ServiceUsageClient } = require("@google-cloud/service-usage");
+import { ServiceUsageClient } from "@google-cloud/service-usage";
 const client = new ServiceUsageClient();
 
 export const disableService = async (projectId, serviceName) => {
