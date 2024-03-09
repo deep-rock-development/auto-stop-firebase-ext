@@ -3,12 +3,8 @@ import * as functions from "firebase-functions";
 import { initializeApp } from "firebase-admin/app";
 import { getExtensions } from "firebase-admin/extensions";
 import { createTopic } from "./pubsub.js";
-import {
-  createBudget,
-  getBillingAccountId,
-  findBudgetByName,
-} from "./budget.js";
-import { disableService } from "./services.js";
+import { disableService } from "./service-usage.js";
+import * as Constants from "./constants.js";
 
 //------------------------------------------------//
 
@@ -54,10 +50,12 @@ export const installExtension = async () => {
     // const budget = await findBudgetByName(billingAccountId, budgetName);
     // console.log(`Found Budget: ${budget}`);
     getExtensions().runtime().setProcessingState("PROCESSING_COMPLETE");
+    console.log("✅ Extension installed successfully");
     return;
   } catch (error) {
     console.error(`❌ Failed to install extension:`, error);
     getExtensions().runtime().setProcessingState("PROCESSING_FAILED");
+    throw error;
   }
 };
 
@@ -68,6 +66,19 @@ export const stopServices = async (message) => {
 
   // Parse the message data as JSON
   const data = messageData ? JSON.parse(messageData) : null;
+  console.log(
+    `🚨 ${data.alertThresholdExceeded} : ${process.env.BUDGET_STOP_THRESHOLD_PERCENT}`
+  );
+
+  if (!data.alertThresholdExceeded) {
+    console.log("🚨 Alert raised, but there was no budget data in the payload");
+    return;
+  }
+
+  if (!process.env.BUDGET_STOP_THRESHOLD_PERCENT) {
+    console.log("🚨 Alert raised, but there was no budget threshold set");
+    return;
+  }
 
   // Check if the alert threshold has been exceeded
   if (data.alertThresholdExceeded < process.env.BUDGET_STOP_THRESHOLD_PERCENT) {
@@ -75,5 +86,25 @@ export const stopServices = async (message) => {
     return;
   }
   console.log("⛔ Budget threshold has been reached, shutting down services");
-  //TODO: Implement service stoppage stuff
+
+  await executeDisable();
 };
+
+export const executeDisable = async () => {
+  //TODO: identify strategy
+
+  //default, disable API
+  await executeDisableAPI();
+};
+
+export const executeDisableAPI = async () => {
+  //disable cloud functions service
+  await disableService(
+    process.env.GCLOUD_PROJECT,
+    Constants.SERVICE_CLOUDFUNCTIONS
+  );
+};
+
+export const executeCircuitBreaker = async () => {};
+
+export const executeDisableBilling = async () => {};

@@ -12,6 +12,13 @@ Firebase extension to stop services when a quota has been reached.
   - Firebase: Navigate to Settings > Usage & Billing, and set a budget. Note the name of the budget.
   - GCP: Navigate to Billing > Budget, create a new budget and set it. Note the name of the budget.
 - Connect budget to pre-defined topic `{TOPIC_NAME}`
+- INSTALL THE EXTENSION
+- Update the service account `{EXTENSION_NAME}@{PROJECT_ID}.iam.gserviceaccount.com` to include the following roles:
+  - Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`); this will allow the function to enable/disable service APIs
+
+Notes:
+
+- When the cloudfunctions service API is disabled, the extension's functions will be removed. This will effectively uninstall the extension.
 
 ## Example pubsub message
 

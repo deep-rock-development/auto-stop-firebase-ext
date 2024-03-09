@@ -87,24 +87,6 @@ params:
     type: STRING
     default: ext-trigger-auto-stop
     required: true
-  # - param: BUDGET_NAME
-  #   label: Name of the budget
-  #   description: The name of the budget that will trigger the shutdown notification
-  #   type: STRING
-  #   default: ext-budget-trigger-auto-stop
-  #   required: true
-  # - param: BUDGET_CURRENCY
-  #   label: Budget currency
-  #   description: Your currency, generally USD, for the budget
-  #   type: STRING
-  #   default: USD
-  #   required: true
-  # - param: BUDGET_AMOUNT
-  #   label: Dollar amount of budget
-  #   description: The amount of currency you want to set your budget to (with respect to the threshold)
-  #   type: STRING
-  #   default: 100
-  #   required: true
   - param: BUDGET_STOP_THRESHOLD_PERCENT
     label: Percent threshold for shutdown
     description: The percent threshold of your budget that will trigger the shutdown notification
