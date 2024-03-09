@@ -93,6 +93,23 @@ params:
     type: STRING
     default: 1.0
     required: true
+  - param: DISABLE_API_LIST
+    label: Select APIs to disable
+    description: For API disabled strategy, select the APIs you want to be disabled when a budget is reached. Note that disabling services will have implications on data or functions in your project.
+    type: list
+    select:
+      - label: Compute
+        value: compute.googleapis.com
+      - label: Storage
+        value: storage.googleapis.com
+      - label: Cloud Functions (incl. Firebase Functions)
+        value: cloudfunctions.googleapis.com
+      - label: Firestore
+        value: firestore.googleapis.com
+      - label: Pub/Sub
+        value: pubsub.googleapis.com
+    default: []
+    required: false
   - param: LOCATION
     label: Cloud Functions Location
     description: The location where the Cloud Functions will be deployed.
