@@ -10,7 +10,7 @@
      - For Strategy 1: Project Billing Manager (`roles/billing.projectManager`)
      - For Strategy 2: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
 
-3. **Test the Extension** by publishing a test message to your Pub/Sub topic. Monitor the logs for any actions taken by the extension in response.
+3. **Test the Extension** by publishing a test message to your Pub/Sub topic. Monitor the logs for any actions taken by the extension in response. You can submit a message to the pub/sub topic with the content `{"extensionTest": true}` to verify permissions and log the output (this will not execute the strategy).
 
 ## Manual Intervention
 

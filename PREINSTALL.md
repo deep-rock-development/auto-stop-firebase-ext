@@ -23,8 +23,3 @@ This extension helps prevent unintended costs by stopping services when a specif
 3. **Decide on the Stop Strategy** you intend to use.
 
 Make sure you have the necessary permissions to assign IAM roles to service accounts.
-
-## Prepare Your Environment
-
-- Ensure the service account running this extension has the `Pub/Sub Editor`, `Service Usage Admin`, and `Project Billing Manager` roles, as it will need to create topics, and potentially disable billing or services.
-- Determine the Pub/Sub topic name you will use to trigger this extension.
