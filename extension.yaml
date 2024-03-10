@@ -90,7 +90,7 @@ params:
     required: true
   - param: BUDGET_STOP_THRESHOLD_PERCENT
     label: Percent threshold for shutdown
-    description: The percent threshold of your budget that will trigger the shutdown notification
+    description: The percent threshold (between 0.0 and 1.0) of your budget that will trigger the shutdown notification. Defaults to 1.0 (100%).
     type: string
     default: 1.0
     required: true
@@ -124,7 +124,7 @@ params:
   - param: LOCATION
     label: Cloud Functions Location
     description: The location where the Cloud Functions will be deployed.
-    type: string
+    type: select
     required: true
     default: us-central1
     options:
@@ -146,12 +146,3 @@ lifecycleEvents:
   onUpdate:
     function: onUpdateExtension
     processingMessage: Update extension resources
-  # onUpdate:
-  #   function: myOtherTaskFunction
-  #   processingMessage: Setting up your extension
-  # onConfigure:
-  #   function: myOtherTaskFunction
-  #   processingMessage: Setting up your extension
-  # onDelete:
-  #   function: myOtherTaskFunction
-  #   processingMessage: Setting up your extension
