@@ -1,7 +1,7 @@
 # Learn detailed information about the fields of an extension.yaml file in the docs:
 # https://firebase.google.com/docs/extensions/reference/extension-yaml
 
-name: functions-auto-stop-firebase  #TODO: consider renaming to firebase standard <firebase-product>-<description-of-tasks-performed>
+name: functions-auto-stop-billing  #TODO: consider renaming to firebase standard <firebase-product>-<description-of-tasks-performed>
 version: 0.1.0  
 specVersion: v1beta  # Version of the Firebase Extensions specification
 
