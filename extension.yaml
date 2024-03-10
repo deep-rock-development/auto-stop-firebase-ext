@@ -85,13 +85,13 @@ params:
   - param: TOPIC_NAME
     label: Pub/Sub Topic Name
     description: The name of the Pub/Sub topic to subscribe to for triggering the stopTriggered function.
-    type: STRING
+    type: string
     default: ext-trigger-auto-stop
     required: true
   - param: BUDGET_STOP_THRESHOLD_PERCENT
     label: Percent threshold for shutdown
     description: The percent threshold of your budget that will trigger the shutdown notification
-    type: STRING
+    type: string
     default: 1.0
     required: true
   - param: DISABLE_BILLING
@@ -108,7 +108,7 @@ params:
   - param: DISABLE_API_LIST
     label: Select APIs to disable
     description: 'Strategy 2: Select services to be disabled when the budget is reached'
-    type: multiselect
+    type: multiSelect
     options:
       - label: Compute
         value: compute.googleapis.com
@@ -124,7 +124,7 @@ params:
   - param: LOCATION
     label: Cloud Functions Location
     description: The location where the Cloud Functions will be deployed.
-    type: STRING
+    type: string
     required: true
     default: us-central1
     options:
