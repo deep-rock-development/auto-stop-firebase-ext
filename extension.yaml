@@ -136,8 +136,6 @@ params:
         value: europe-west1
       - label: Taiwan (asia-east1)
         value: asia-east1
-    validationRegex: '^[a-z]+-[a-z]+[0-9]+$'
-    validationErrorMessage: "The location must be in the format of 'region-zone'."
 
 lifecycleEvents:
   onInstall:
