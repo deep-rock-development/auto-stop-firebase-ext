@@ -36,7 +36,8 @@ apis:
     reason: Necessary to deploy and execute functions in response to Pub/Sub messages.
   - apiName: billingbudgets.googleapis.com
     reason: Necessary to create and manage budgets.
-
+  - apiName: serviceusage.googleapis.com
+    reason: Necessary to disable services.
 
 # In a `roles` field, list any IAM access roles required for your extension to operate.
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#roles-field
@@ -93,11 +94,22 @@ params:
     type: STRING
     default: 1.0
     required: true
+  - param: DISABLE_BILLING
+    label: Disable billing on project
+    description: 'Strategy 1: Removes the billing account from the project, stopping services from accuring costs.'
+    type: select
+    options:
+      - label: Yes
+        value: true
+      - label: No
+        value: false
+    default: false
+    required: true
   - param: DISABLE_API_LIST
     label: Select APIs to disable
-    description: For API disabled strategy, select the APIs you want to be disabled when a budget is reached. Note that disabling services will have implications on data or functions in your project.
-    type: list
-    select:
+    description: 'Strategy 2: Select services to be disabled when the budget is reached'
+    type: multiselect
+    options:
       - label: Compute
         value: compute.googleapis.com
       - label: Storage
@@ -108,7 +120,6 @@ params:
         value: firestore.googleapis.com
       - label: Pub/Sub
         value: pubsub.googleapis.com
-    default: []
     required: false
   - param: LOCATION
     label: Cloud Functions Location

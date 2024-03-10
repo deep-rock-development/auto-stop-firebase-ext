@@ -1,22 +1,30 @@
-<!-- 
-This file provides your users an overview of your extension. All content is optional, but this is the recommended format. Your users will see the contents of this file when they run the `firebase ext:info` command.
+# Before You Install
 
-Include any important functional details as well as a brief description for any additional setup required by the user (both pre- and post-installation).
+## Understand the Extension
 
-Learn more about writing a PREINSTALL.md file in the docs:
-https://firebase.google.com/docs/extensions/publishers/user-documentation#writing-preinstall
--->
+This extension helps prevent unintended costs by stopping services when a specified budget threshold is reached. It offers two strategies:
 
-Use this extension to send a friendly greeting.
+1. Removing the billing account from the project.
+2. Disabling predefined Google Cloud services.
 
-When triggered by an HTTP request, this extension responds with your specified friendly greeting.
+## Prerequisites
 
-<!-- We recommend keeping the following section to explain how billing for Firebase Extensions works -->
-# Billing
+- A Google Cloud project with Firebase enabled.
+- Billing set up on your Google Cloud project.
+- The [Pub/Sub API](https://cloud.google.com/pubsub) enabled.
+- Familiarity with IAM roles, particularly:
+  - Project Billing Manager (`roles/billing.projectManager`)
+  - Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
 
-This extension uses other Firebase or Google Cloud Platform services which may have associated charges:
+## Pre-installation Steps
 
-<!-- List all products the extension interacts with -->
-- Cloud Functions
+1. **Set a Budget** in Google Cloud Billing.
+2. **Note the Budget Name**; you'll need it for the extension configuration.
+3. **Decide on the Stop Strategy** you intend to use.
 
-When you use Firebase Extensions, you're only charged for the underlying resources that you use. A paid-tier billing plan is only required if the extension uses a service that requires a paid-tier plan, for example calling to a Google Cloud Platform API or making outbound network requests to non-Google services. All Firebase services offer a free tier of usage. [Learn more about Firebase billing.](https://firebase.google.com/pricing)
+Make sure you have the necessary permissions to assign IAM roles to service accounts.
+
+## Prepare Your Environment
+
+- Ensure the service account running this extension has the `Pub/Sub Editor`, `Service Usage Admin`, and `Project Billing Manager` roles, as it will need to create topics, and potentially disable billing or services.
+- Determine the Pub/Sub topic name you will use to trigger this extension.

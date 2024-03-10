@@ -1,29 +1,32 @@
-<!-- 
-This file provides your users an overview of how to use your extension after they've installed it. All content is optional, but this is the recommended format. Your users will see the contents of this file in the Firebase console after they install the extension.
+# After Installation
 
-Include instructions for using the extension and any important functional details. Also include **detailed descriptions** for any additional post-installation setup required by the user.
+## Next Steps
 
-Reference values for the extension instance using the ${param:PARAMETER_NAME} or ${function:VARIABLE_NAME} syntax.
-Learn more in the docs: https://firebase.google.com/docs/extensions/publishers/user-documentation#reference-in-postinstall
+1. **Configure Your Budget Alert** to publish messages to the Pub/Sub topic (`{TOPIC_NAME}`) used by this extension.
 
-Learn more about writing a POSTINSTALL.md file in the docs:
-https://firebase.google.com/docs/extensions/publishers/user-documentation#writing-postinstall
--->
+2. **Verify IAM Permissions**:
 
-# See it in action
+   - Ensure the extension's service account (`{EXTENSION_NAME}@{PROJECT_ID}.iam.gserviceaccount.com`) has the necessary roles:
+     - For Strategy 1: Project Billing Manager (`roles/billing.projectManager`)
+     - For Strategy 2: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
 
-You can test out this extension right away!
+3. **Test the Extension** by publishing a test message to your Pub/Sub topic. Monitor the logs for any actions taken by the extension in response.
 
-Visit the following URL:
-${function:greetTheWorld.url}
+## Manual Intervention
 
-# Using the extension
+- **Review and Confirm Service Account Permissions**. Double-check the roles assigned to the extension's service account to ensure it can perform its tasks.
 
-When triggered by an HTTP request, this extension responds with the following specified greeting: "${param:GREETING} World from ${param:EXT_INSTANCE_ID}".
+- **Monitor Your Costs**. Even with this extension, monitor your Google Cloud costs and usage through the Google Cloud Console.
 
-To learn more about HTTP functions, visit the [functions documentation](https://firebase.google.com/docs/functions/http-events).
+## Uninstalling the Extension
 
-<!-- We recommend keeping the following section to explain how to monitor extensions with Firebase -->
-# Monitoring
+If you decide to uninstall this extension, remember to:
 
-As a best practice, you can [monitor the activity](https://firebase.google.com/docs/extensions/manage-installed-extensions#monitor) of your installed extension, including checks on its health, usage, and logs.
+- Remove any budget alerts configured to publish to the extension's Pub/Sub topic.
+- Optionally, clean up any resources created by the extension that are no longer needed.
+
+## Getting Help
+
+For issues or questions about this extension, check the [GitHub repository](https://github.com/deep-rock-development/auto-stop-firebase-ext) or reach out through Firebase support.
+
+Remember, disabling essential services can impact your application's functionality. Plan and test carefully.

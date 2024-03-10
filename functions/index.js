@@ -5,6 +5,8 @@ import { getExtensions } from "firebase-admin/extensions";
 import { createTopic } from "./pubsub.js";
 import { disableService } from "./service-usage.js";
 import * as Constants from "./constants.js";
+import { disableBillingForProject } from "./budget.js";
+import { testIamPermissions } from "./resource-validation.js";
 
 //------------------------------------------------//
 
@@ -29,7 +31,7 @@ export const stopTriggered = functions.pubsub
   .topic(process.env.TOPIC_NAME)
   .onPublish(async (message) => {
     // stopServices(); //async?
-    console.log("⚙️ Received budget alert message...");
+    console.log("ℹ️ Received budget alert message...");
     await stopServices(message);
   });
 
@@ -70,6 +72,12 @@ export const stopServices = async (message) => {
     `🚨 ${data.alertThresholdExceeded} : ${process.env.BUDGET_STOP_THRESHOLD_PERCENT}`
   );
 
+  if (data.extensionTest) {
+    console.log("ℹ️ Received budget alert message with test parameter");
+    await testIamPermissions(process.env.GCLOUD_PROJECT);
+    return;
+  }
+
   if (!data.alertThresholdExceeded) {
     console.log("🚨 Alert raised, but there was no budget data in the payload");
     return;
@@ -85,26 +93,53 @@ export const stopServices = async (message) => {
     console.log("✅ Budget below threshold, services are online");
     return;
   }
+
   console.log("⛔ Budget threshold has been reached, shutting down services");
 
   await executeDisable();
 };
 
 export const executeDisable = async () => {
-  //TODO: identify strategy
-
-  //default, disable API
+  await executeDisableBilling();
   await executeDisableAPI();
 };
 
 export const executeDisableAPI = async () => {
-  //disable cloud functions service
-  await disableService(
-    process.env.GCLOUD_PROJECT,
-    Constants.SERVICE_CLOUDFUNCTIONS
-  );
+  //Extract selected APIs
+  const disableApiList = process.env.DISABLE_API_LIST.split(",");
+  let disableFunctions = false;
+  console.log(`ℹ️ List of services to disable: ${disableApiList}`);
+
+  if (disableApiList.length === 0) {
+    console.log("ℹ️ No services to disable");
+    return;
+  }
+
+  //Iterate through selected APIs and disable one-by-one
+  for (const api of disableApiList) {
+    //We need to disable cloud functions last
+    if (api === Constants.SERVICE_CLOUDFUNCTIONS) {
+      disableFunctions = true;
+    }
+    console.log(`ℹ️ Disabling service: ${api}`);
+    await disableService(process.env.GCLOUD_PROJECT, api);
+  }
+
+  //Finally disable the cloud functions API
+  if (disableFunctions) {
+    console.log(`ℹ️ Disabling service: ${Constants.SERVICE_CLOUDFUNCTIONS}`);
+    await disableService(
+      process.env.GCLOUD_PROJECT,
+      Constants.SERVICE_CLOUDFUNCTIONS
+    );
+  }
 };
 
-export const executeCircuitBreaker = async () => {};
+export const executeDisableBilling = async () => {
+  if (!process.env.DISABLE_BILLING) {
+    console.log("ℹ️ Disable billing is not active, skipping strategy");
+    return;
+  }
 
-export const executeDisableBilling = async () => {};
+  await disableBillingForProject(process.env.GCLOUD_PROJECT);
+};
