@@ -120,9 +120,10 @@ export const executeDisableAPI = async () => {
     //We need to disable cloud functions last
     if (api === Constants.SERVICE_CLOUDFUNCTIONS) {
       disableFunctions = true;
+    } else {
+      console.log(`ℹ️ Disabling service: ${api}`);
+      await disableService(process.env.GCLOUD_PROJECT, api);
     }
-    console.log(`ℹ️ Disabling service: ${api}`);
-    await disableService(process.env.GCLOUD_PROJECT, api);
   }
 
   //Finally disable the cloud functions API
