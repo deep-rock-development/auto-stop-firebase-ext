@@ -1,3 +1,9 @@
+## Version 1.0.1
+
+Release Date: 13th March 2024
+
+- Included icon to extensions.yaml
+
 ## Version 1.0.0
 
 Release Date: 10th March 2024
