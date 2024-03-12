@@ -16,6 +16,9 @@ author:
   authorName: Kurt Weston
   url: https://github.com/deep-rock-development
 
+icon: icon.png 
+tags: [utilities]
+
 license: Apache-2.0  # https://spdx.org/licenses/
 
 # Public URL for the source code of your extension.
