@@ -2,7 +2,7 @@
 # https://firebase.google.com/docs/extensions/reference/extension-yaml
 
 name: functions-auto-stop-billing  #TODO: consider renaming to firebase standard <firebase-product>-<description-of-tasks-performed>
-version: 1.0.0 
+version: 1.0.1 
 specVersion: v1beta  # Version of the Firebase Extensions specification
 
 # Friendly display name for your extension (~3-5 words)
