@@ -26,7 +26,7 @@ This extension requires the following post-installation steps:
 
 ### How it all works
 
-![high-level-view-diagram.png]
+![High Level View of Extension](high-level-view-diagram.png)
 Once all the post-installation steps are completed, the Pub/Sub topic we setup will listen to the budget for an alert. When an alert is raised that meets (or exceeds) the defined threshold a Firebase function will execute the strategy you select.
 
 #### What happens?
