@@ -1,5 +1,3 @@
-### How this extension works
-
 Use this extension to stop Firebase and Google Cloud Services when a specified budget threshold is reached in your project.
 
 This extension supports the following use cases:
