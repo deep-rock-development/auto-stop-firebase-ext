@@ -1,32 +1,77 @@
-# After Installation
+### Post-installation steps
 
-## Next Steps
+After the installation of this extension, you must:
 
-1. **Configure Your Budget Alert** to publish messages to the Pub/Sub topic (`{TOPIC_NAME}`) used by this extension.
+- Create a Budget against your project (if none exists), and connect it to the Pub/Sub topic created
+- Assign the extension's service account the `roles/billing.projectManager` role (for Strategy 1)
+- Assign the extension's service account the `roles/serviceusage.service` role (for Strategy 2)
 
-2. **Verify IAM Permissions**:
+Further detail is provided below.
 
-   - Ensure the extension's service account (`{EXTENSION_NAME}@{PROJECT_ID}.iam.gserviceaccount.com`) has the necessary roles:
-     - For Strategy 1: Project Billing Manager (`roles/billing.projectManager`)
-     - For Strategy 2: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
+### Detailed post-installation steps
 
-3. **Test the Extension** by publishing a test message to your Pub/Sub topic. Monitor the logs for any actions taken by the extension in response. You can submit a message to the pub/sub topic with the content `{"extensionTest": true}` to verify permissions and log the output (this will not execute the strategy).
+This extension requires the following post-installation steps:
 
-## Manual Intervention
+1. Create a budget if none exists:
+   - **Firebase**: Go to Settings > Usage & Billing. Set a budget and note its name (Recommended)
+   - **GCP**: Navigate to Billing > Budgets. Create a new budget, set it, and note the budget name.
+2. Check that your budget is configured correctly - ensure that there is a threshold of 100%.
+3. Connect your budget to the Pub/Sub topic created by the extension (defined under the `TOPIC_NAME` parameter during installation). This can be done by editing your budget.
+4. Assign the extension's service account (`ext-functions-auto-stop-billing@{PROJECT_ID}.iam.gserviceaccount.com`)the appropriate IAM roles:
 
-- **Review and Confirm Service Account Permissions**. Double-check the roles assigned to the extension's service account to ensure it can perform its tasks.
+- Strategy 1: Project Billing Manager (`roles/billing.projectManager`)
+- Strategy 2: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
 
-- **Monitor Your Costs**. Even with this extension, monitor your Google Cloud costs and usage through the Google Cloud Console.
+### Operating the extension
 
-## Uninstalling the Extension
+### How it all works
 
-If you decide to uninstall this extension, remember to:
+![high-level-view-diagram.png]
+Once all the post-installation steps are completed, the Pub/Sub topic we setup will listen to the budget for an alert. When an alert is raised that meets (or exceeds) the defined threshold a Firebase function will execute the strategy you select.
 
-- Remove any budget alerts configured to publish to the extension's Pub/Sub topic.
-- Optionally, clean up any resources created by the extension that are no longer needed.
+#### Testing permissions
 
-## Getting Help
+The easiest way to test this extension is to publish a test message into the topic `TOPIC_NAME`. You can use the test message with the content:
+
+```
+{
+  "extensionTest" : true
+}
+```
+
+This will validate that the extension has the necessary permissions to execute the service stop. You can monitor Logs Explorer to see the results.
+
+#### What happens?
+
+There are three key components to this extension:
+
+- Budget - will monitor your costs and raise an alert at pre-defined thresholds.
+- Pub/Sub topic - will receive any alerts raised and provide them to subscribers.
+- Firebase function - will receive alerts, assess, and take appropriate action (dismiss or stop services)
+
+The budget will generate messages and send them to the topic, these messages are structured as:
+
+```json
+{
+  "budgetDisplayName": "Your Budget Name",
+  "alertThresholdExceeded": 0.5,
+  "costAmount": 500.0,
+  ...
+  "projectId": "your-project-id",
+  "billingAccountId": "012345-6789AB-CDEF01"
+}
+```
+
+The field `alertThresholdExceeded` is monitored by the extension, and will determine whether or not to take action. Where the value of this field meets or exceeds the parameter `BUDGET_STOP_THRESHOLD_PERCENT` then the strategy is executed.
+
+### Additional Notes
+
+This extension is aimed at supporting Firebase users to prevent cost-overrun. There are some additional points to keep in mind when using this extension:
+
+- Review and confirm Service Account permissions includes the roles assigned to the extension's service account are sufficient to perform its tasks.
+- Even with this extension, you should monitor your Google Cloud costs and usage through the Google Cloud Console.
+- Remember, disabling essential services can impact your application's functionality. Plan and test carefully. Please consider capturing your configuration through your code repository (versus click ops).
+
+### Getting Help
 
 For issues or questions about this extension, check the [GitHub repository](https://github.com/deep-rock-development/auto-stop-firebase-ext) or reach out through Firebase support.
-
-Remember, disabling essential services can impact your application's functionality. Plan and test carefully.

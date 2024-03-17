@@ -1,25 +1,54 @@
-# Before You Install
+### How this extension works
 
-## Understand the Extension
+Use this extension to stop Firebase and Google Cloud Services when a specified budget threshold is reached in your project.
 
-This extension helps prevent unintended costs by stopping services when a specified budget threshold is reached. It offers two strategies:
+This extension supports the following use cases:
 
-1. Removing the billing account from the project.
-2. Disabling predefined Google Cloud services.
+- Stop your project from accuring more costs than you intend.
+- Disable predefined services when costs ramp up unexpectedly.
+- Control the costs of your project and rest easy knowing you will not have any unexpected bills.
+- Kill switch your non-production environment services.
 
-## Prerequisites
+The extension delivers on these use cases by:
 
-- A Google Cloud project with Firebase enabled.
-- Billing set up on your Google Cloud project.
-- The [Pub/Sub API](https://cloud.google.com/pubsub) enabled.
-- Familiarity with IAM roles, particularly:
-  - Project Billing Manager (`roles/billing.projectManager`)
-  - Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
+- **Strategy 1:** Removing the billing account from your project through the Billing API, thereby stopping all services from running (Recommended)
+- **Strategy 2:** Disabling predefined Google Cloud Services in your project through the Service Usage API.
 
-## Pre-installation Steps
+### Things you will need
 
-1. **Set a Budget** in Google Cloud Billing.
-2. **Note the Budget Name**; you'll need it for the extension configuration.
-3. **Decide on the Stop Strategy** you intend to use.
+The extension is intended to do as much of the setup work as possible for you. However, due to some limitations with extensions, some manual steps are required.
 
-Make sure you have the necessary permissions to assign IAM roles to service accounts.
+#### Pre-installation setup
+
+You must have a Google Cloud/Firebase project and an associated billing account.
+
+- Decide on a budget amount
+- Decide on a stop strategy (Strategy 1 or Strategy 2)
+
+#### Post-installation setup
+
+After the installation of this extension, you must:
+
+- Create a Budget against your project (if none exists), and connect it to the Pub/Sub topic created
+- Assign the extension's service account the `roles/billing.projectManager` role (for Strategy 1)
+- Assign the extension's service account the `roles/serviceusage.service` role (for Strategy 2)
+
+### Services used
+
+This extension uses the following Firebase services which may have associated charges:
+
+- Cloud Functions (Firebase functions)
+- Cloud Billing
+- Cloud Service Usage
+- Cloud Pub/Sub
+- If you enable events [Eventarc fees apply](https://cloud.google.com/eventarc/pricing).
+
+This extension does not use any third-party services.
+
+### Billing
+
+To install an extension, your project must be on the [Blaze (pay as you go) plan](https://firebase.google.com/pricing)
+
+- You will be charged a small amount (typically around $0.01/month) for the Firebase resources required by this extension (even if it is not used).
+- This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
+- Cloud Functions (Node.js 10+ runtime. [See FAQs](https://firebase.google.com/support/faq#extensions-pricing))
