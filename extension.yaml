@@ -2,7 +2,7 @@
 # https://firebase.google.com/docs/extensions/reference/extension-yaml
 
 name: functions-auto-stop-billing  #TODO: consider renaming to firebase standard <firebase-product>-<description-of-tasks-performed>
-version: 1.0.1 
+version: 1.0.2 
 specVersion: v1beta  # Version of the Firebase Extensions specification
 
 # Friendly display name for your extension (~3-5 words)
@@ -10,7 +10,7 @@ displayName: Auto Stop Services
 
 # Brief description of the task your extension performs (~1 sentence)
 description: >-
-  Stops all Firebase services when a billing quota has been reached.
+  Stops cost overruns by disabling Firebase services when a billing threshold has been reached.
 
 author:
   authorName: Kurt Weston
@@ -32,15 +32,15 @@ billingRequired: true
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#apis-field
 apis:
   - apiName: cloudbilling.googleapis.com
-    reason: Needed to manage budget and receive alerts.
+    reason: Needed to manage budget and receive budget alerts.
   - apiName: pubsub.googleapis.com
-    reason: Required for publishing and subscribing to budget alert messages.
+    reason: Required for creating and managing pub/sub topics.
   - apiName: cloudfunctions.googleapis.com
-    reason: Necessary to deploy and execute functions in response to Pub/Sub messages.
+    reason: Necessary to deploy and execute functions that respond to budget alerts.
   - apiName: billingbudgets.googleapis.com
     reason: Necessary to create and manage budgets.
   - apiName: serviceusage.googleapis.com
-    reason: Necessary to disable services.
+    reason: Necessary to disable services in response to budget alerts reached.
 
 # In a `roles` field, list any IAM access roles required for your extension to operate.
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#roles-field
@@ -50,7 +50,7 @@ roles:
   - role: pubsub.publisher
     reason: Publish to topics
   - role: pubsub.subscriber
-    reason: subscribe to a topic
+    reason: Subscribe to a topic
 
 # In the `resources` field, list each of your extension's functions, including the trigger for each function.
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#resources-field
@@ -66,7 +66,7 @@ resources:
   - name: onUpdateExtension
     type: firebaseextensions.v1beta.function
     description: >-
-      Creates the resources necessary for the extension to operate.
+      Creates and/or updates the resources necessary for the extension to operate.
     properties:
       runtime: nodejs18
       location: ${LOCATION}
@@ -74,7 +74,7 @@ resources:
   - name: stopTriggered
     type: firebaseextensions.v1beta.function
     description: >-
-      Stops services in response to a pub/sub message.
+      Stops services in response to a pub/sub message from a budget alert.
     properties:
       runtime: nodejs18
       location: ${LOCATION}
@@ -86,31 +86,31 @@ resources:
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#params-field
 params:
   - param: TOPIC_NAME
-    label: Pub/Sub Topic Name
+    label: Topic Name
     description: The name of the Pub/Sub topic to subscribe to for triggering the stopTriggered function.
     type: string
-    default: ext-trigger-auto-stop
+    default: ext-firebase-trigger-auto-stop
     required: true
   - param: BUDGET_STOP_THRESHOLD_PERCENT
-    label: Percent threshold for shutdown
+    label: Stop Budget Threshold
     description: The percent threshold (between 0.0 and 1.0) of your budget that will trigger the shutdown notification. Defaults to 1.0 (100%).
     type: string
     default: 1.0
     required: true
   - param: DISABLE_BILLING
-    label: Disable billing on project
-    description: 'Strategy 1: Removes the billing account from the project, stopping services from accuring costs.'
+    label: Disable Billing (Strategy 1)
+    description: 'Strategy 1: Removes the billing account from the project, stopping services from accuring costs. If Yes is selected, when the budget threshold is reached the Billing Account is removed from the project. This is the recommended strategy.'
     type: select
     options:
       - label: Yes
         value: true
       - label: No
         value: false
-    default: false
+    default: true
     required: true
   - param: DISABLE_API_LIST
-    label: Select APIs to disable
-    description: 'Strategy 2: Select services to be disabled when the budget is reached'
+    label: APIs to Disable (Strategy 2)
+    description: 'Strategy 2: Select services to be disabled when the budget is reached. If services are selected, when a budget threshold is reached these will be deactivated. If none are selected this strategy is not used.'
     type: multiSelect
     options:
       - label: Compute
@@ -131,14 +131,24 @@ params:
     required: true
     default: us-central1
     options:
-      - label: Iowa (us-central1)
-        value: us-central1
-      - label: South Carolina (us-east1)
-        value: us-east1
-      - label: Belgium (europe-west1)
-        value: europe-west1
-      - label: Taiwan (asia-east1)
-        value: asia-east1
+        - label: Iowa (us-central1)
+          value: us-central1
+        - label: South Carolina (us-east1)
+          value: us-east1
+        - label: Belgium (europe-west1)
+          value: europe-west1
+        - label: Taiwan (asia-east1)
+          value: asia-east1
+        - label: Mumbai (asia-south1)
+          value: asia-south1
+        - label: London (europe-west2)
+          value: europe-west2
+        - label: Sydney (australia-southeast1)
+          value: australia-southeast1
+        - label: São Paulo (southamerica-east1)
+          value: southamerica-east1
+        - label: Tokyo (asia-northeast1)
+          value: asia-northeast1
 
 lifecycleEvents:
   onInstall:
