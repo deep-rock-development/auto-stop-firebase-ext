@@ -22,8 +22,6 @@ This extension requires the following post-installation steps:
 - Strategy 1: Project Billing Manager (`roles/billing.projectManager`)
 - Strategy 2: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
 
-### Operating the extension
-
 ### How it all works
 
 ![High Level View of Extension](high-level-view-diagram.png)
