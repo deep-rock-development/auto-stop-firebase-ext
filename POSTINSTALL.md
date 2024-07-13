@@ -69,6 +69,12 @@ This extension is aimed at supporting Firebase users to prevent cost-overrun. Th
 - Even with this extension, you should monitor your Google Cloud costs and usage through the Google Cloud Console.
 - Remember, disabling essential services can impact your application's functionality. Plan and test carefully. Please consider capturing your configuration through your code repository (versus click ops).
 
+#### A further note
+
+Unfortunately due to Firebase Extensions limitations, there are specific extension activities that are not supported. One of which is the creation of a budget and IAM role assignment. This is true as at 13th July 2024. However, this extension has been created to minimise the amount of work that is required. In future, where limitations are removed, this extension will be updated.
+
+However the repository is active, and any proposed changes are welcome!
+
 ### Getting Help
 
 For issues or questions about this extension, check the [GitHub repository](https://github.com/deep-rock-development/auto-stop-firebase-ext) or reach out through Firebase support.
