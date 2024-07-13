@@ -43,7 +43,7 @@ export const stopServices = async (message) => {
   // Parse the message data as JSON
   const data = messageData ? JSON.parse(messageData) : null;
   console.log(
-    `🚨 ${data.alertThresholdExceeded} : ${process.env.BUDGET_STOP_THRESHOLD_PERCENT}`
+    `🚨 Alert: ${data.alertThresholdExceeded} : Configuration: ${process.env.BUDGET_STOP_THRESHOLD_PERCENT}`
   );
 
   // Validate if the message is a test message
