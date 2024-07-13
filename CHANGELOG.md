@@ -1,3 +1,10 @@
+## Version 1.0.4
+
+Release Date: 13th July 2024
+
+- Further updates to documentation (minor touch ups)
+- Removed unnecessary code
+
 ## Version 1.0.3
 
 Release Date: 17th March 2024

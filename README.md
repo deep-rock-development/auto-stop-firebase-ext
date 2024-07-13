@@ -1,5 +1,7 @@
 # Auto Stop Services Firebase Extension
 
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/keston)
+
 ## What is this?
 
 This extension is intended to support development, or early stage production environments from accruing significant costs by stopping services. This is a challenge as cloud platforms are usage based, and many methods provided by cloud providers are intended to support service uptime; and will not make any effort to mitigate unintended service overuse. Billing alerts are out of the box only intended to alert administrators that a budget threshold has been reached, but not take any action.
