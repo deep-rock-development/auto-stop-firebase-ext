@@ -3,7 +3,8 @@
 Release Date: 13th July 2024
 
 - Further updates to documentation (minor touch ups)
-- Removed unnecessary code
+- Removed unnecessary code and general tidy up
+- Fixed bug where dependent services for Strategy 2 were stopping service shutdown
 
 ## Version 1.0.3
 

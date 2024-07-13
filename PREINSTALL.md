@@ -43,9 +43,9 @@ This extension uses the following Firebase services which may have associated ch
 
 This extension does not use any third-party services.
 
-#### A further note
+### A further note
 
-Unfortunately due to Firebase Extensions limitations, there are specific activities that are not supported. One of which is the creation of a budget. This is true as at 13th July 2024. However, this extension has been created to minimise the amount of work that is required. In future, where limitations are removed, this extension will be updated.
+Unfortunately due to Firebase Extensions limitations, there are specific setup activities must be carried out manually. These are the creation of a budget and IAM role assignment. However, this extension has been created to minimise the amount of work that is required. In future, where limitations are removed, this extension will be updated.
 
 However the repository is active, and any proposed changes are welcome!
 

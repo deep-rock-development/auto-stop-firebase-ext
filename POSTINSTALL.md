@@ -16,18 +16,14 @@ This extension requires the following post-installation steps:
    - **Firebase**: Go to Settings > Usage & Billing. Set a budget and note its name (Recommended)
    - **GCP**: Navigate to Billing > Budgets. Create a new budget, set it, and note the budget name.
 2. Check that your budget is configured correctly - ensure that there is a threshold of 100%.
-3. Connect your budget to the Pub/Sub topic created by the extension (defined under the `TOPIC_NAME` parameter during installation). This can be done by editing your budget.
-4. Assign the extension's service account (`ext-functions-auto-stop-billing@{PROJECT_ID}.iam.gserviceaccount.com`) the appropriate IAM roles:
-
-- Strategy 1: Project Billing Manager (`roles/billing.projectManager`)
-- Strategy 2: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
+3. Edit the Budget to connect it to the Pub/Sub topic created by the extension, this is the `TOPIC_NAME` you set. The setting is 'Connect a Pub/Sub topic to this budget' when editing.
+4. Under IAM, assign the extension's service account (`ext-functions-auto-stop-billing@{PROJECT_ID}.iam.gserviceaccount.com`) the relevant IAM roles:
+   - **Strategy 1**: Project Billing Manager (`roles/billing.projectManager`)
+   - **Strategy 2**: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
 
 ### How it all works
 
-![High Level View of Extension](high-level-view-diagram.png)
 Once all the post-installation steps are completed, the Pub/Sub topic we setup will listen to the budget for an alert. When an alert is raised that meets (or exceeds) the defined threshold a Firebase function will execute the strategy you select.
-
-#### What happens?
 
 There are three key components to this extension:
 
@@ -49,7 +45,7 @@ The budget will generate messages and send them to the topic, these messages are
 
 The field `alertThresholdExceeded` is monitored by the extension, and will determine whether or not to take action. Where the value of this field meets or exceeds the parameter `BUDGET_STOP_THRESHOLD_PERCENT` then the strategy is executed.
 
-#### Testing permissions
+### Testing permissions
 
 The easiest way to test this extension is to publish a test message into the topic `TOPIC_NAME`. You can use the test message with the content:
 
@@ -69,9 +65,7 @@ This extension is aimed at supporting Firebase users to prevent cost-overrun. Th
 - Even with this extension, you should monitor your Google Cloud costs and usage through the Google Cloud Console.
 - Remember, disabling essential services can impact your application's functionality. Plan and test carefully. Please consider capturing your configuration through your code repository (versus click ops).
 
-#### A further note
-
-Unfortunately due to Firebase Extensions limitations, there are specific extension activities that are not supported. One of which is the creation of a budget and IAM role assignment. This is true as at 13th July 2024. However, this extension has been created to minimise the amount of work that is required. In future, where limitations are removed, this extension will be updated.
+Unfortunately due to Firebase Extensions limitations, there are specific setup activities must be carried out manually. These are the creation of a budget and IAM role assignment. However, this extension has been created to minimise the amount of work that is required. In future, where limitations are removed, this extension will be updated.
 
 However the repository is active, and any proposed changes are welcome!
 
