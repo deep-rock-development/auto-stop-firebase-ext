@@ -6,6 +6,8 @@
 
 This extension is intended to support development, or early stage production environments from accruing significant costs by stopping services. This is a challenge as cloud platforms are usage based, and many methods provided by cloud providers are intended to support service uptime; and will not make any effort to mitigate unintended service overuse. Billing alerts are out of the box only intended to alert administrators that a budget threshold has been reached, but not take any action.
 
+See also: [Auto Stop Services](https://deep-rock.gitbook.io/auto-stop-services) on GitBook.
+
 ## How does it work?
 
 ![High Level View of Extension](high-level-view-diagram.png)
