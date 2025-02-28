@@ -91,7 +91,7 @@ params:
     required: true
   - param: DISABLE_BILLING
     label: Disable Billing (Strategy 1)
-    description: "Strategy 1: Removes the billing account from the project, stopping services from accuring costs. If Yes is selected, when the budget threshold is reached the Billing Account is removed from the project. This is the recommended strategy."
+    description: "Strategy 1: Removes the billing account from the project, stopping services from accruing costs. If Yes is selected, when the budget threshold is reached the Billing Account is removed from the project. This is the recommended strategy."
     type: select
     options:
       - label: Yes
@@ -102,19 +102,37 @@ params:
     required: true
   - param: DISABLE_API_LIST
     label: APIs to Disable (Strategy 2)
-    description: "Strategy 2: Select services to be disabled when the budget is reached. If services are selected, when a budget threshold is reached these will be deactivated. If none are selected this strategy is not used."
+    description: "Strategy 2: Select services to be disabled when the budget is reached. If services are selected, when a budget threshold is reached these will be deactivated. If none are selected this strategy is not used. Note that this strategy is only recommended for advanced users."
     type: multiSelect
     options:
+      - label: Firebase Storage
+        value: firebasestorage.googleapis.com
+      - label: Cloud Functions (Firebase Functions)
+        value: cloudfunctions.googleapis.com
+      - label: Firestore
+        value: firestore.googleapis.com
+      - label: Firebase Hosting
+        value: firebasehosting.googleapis.com
+      - label: Firebase Realtime Database
+        value: firebasedatabase.googleapis.com
+      - label: Firebase ML
+        value: firebaseml.googleapis.com
+      - label: Firebase ML Kit
+        value: mlkit.googleapis.com
+      - label: Firebase Vertex AI
+        value: firebasevertexai.googleapis.com
+      - label: Firebase Cloud Messaging
+        value: fcm.googleapis.com
+      - label: Firebase Authentication
+        value: identitytoolkit.googleapis.com
+      - label: Firebase Extensions
+        value: firebaseextensions.googleapis.com
+      - label: Pub/Sub
+        value: pubsub.googleapis.com
       - label: Compute
         value: compute.googleapis.com
       - label: Storage
         value: storage.googleapis.com
-      - label: Cloud Functions (incl. Firebase Functions)
-        value: cloudfunctions.googleapis.com
-      - label: Firestore
-        value: firestore.googleapis.com
-      - label: Pub/Sub
-        value: pubsub.googleapis.com
     required: false
   - param: LOCATION
     label: Cloud Functions Location
@@ -141,6 +159,34 @@ params:
         value: southamerica-east1
       - label: Tokyo (asia-northeast1)
         value: asia-northeast1
+      - label: Northern Virginia (us-east4)
+        value: us-east4
+      - label: Oregon (us-west1)
+        value: us-west1
+      - label: Los Angeles (us-west2)
+        value: us-west2
+      - label: Salt Lake City (us-west3)
+        value: us-west3
+      - label: Las Vegas (us-west4)
+        value: us-west4
+      - label: Warsaw (europe-central2)
+        value: europe-central2
+      - label: Frankfurt (europe-west3)
+        value: europe-west3
+      - label: Zurich (europe-west6)
+        value: europe-west6
+      - label: Hong Kong (asia-east2)
+        value: asia-east2
+      - label: Osaka (asia-northeast2)
+        value: asia-northeast2
+      - label: Seoul (asia-northeast3)
+        value: asia-northeast3
+      - label: Singapore (asia-southeast1)
+        value: asia-southeast1
+      - label: Jakarta (asia-southeast2)
+        value: asia-southeast2
+      - label: Montreal (northamerica-northeast1)
+        value: northamerica-northeast1
 
 lifecycleEvents:
   onInstall:

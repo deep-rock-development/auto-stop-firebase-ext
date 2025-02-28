@@ -42,9 +42,6 @@ export const stopServices = async (message) => {
 
   // Parse the message data as JSON
   const data = messageData ? JSON.parse(messageData) : null;
-  console.log(
-    `🚨 Alert: ${data.alertThresholdExceeded} : Configuration: ${process.env.BUDGET_STOP_THRESHOLD_PERCENT}`
-  );
 
   // Validate if the message is a test message
   if (data.extensionTest) {
@@ -53,17 +50,21 @@ export const stopServices = async (message) => {
     return;
   }
 
-  // Validate that there is a threshold identified
-  if (!process.env.BUDGET_STOP_THRESHOLD_PERCENT) {
-    console.log("🚨 Alert raised, but there was no budget threshold set");
-    return;
-  }
-
   // Validate that the payload included budget information
   if (!data.alertThresholdExceeded) {
     console.log("🚨 Alert raised, but there was no budget data in the payload");
     return;
   }
+
+   // Validate that there is a threshold identified
+  if (!process.env.BUDGET_STOP_THRESHOLD_PERCENT) {
+    console.log("🚨 Alert raised, but there was no budget threshold set");
+    return;
+  }
+
+  console.log(
+    `🚨 Alert: ${data.alertThresholdExceeded} : Configuration: ${process.env.BUDGET_STOP_THRESHOLD_PERCENT}`
+  );
 
   // Validate if the alert threshold has been exceeded
   if (data.alertThresholdExceeded < process.env.BUDGET_STOP_THRESHOLD_PERCENT) {
@@ -89,7 +90,14 @@ export const executeDisable = async () => {
  * @returns None
  */
 export const executeDisableAPI = async () => {
-  //Extract selected APIs
+  
+  // Validate that there are services to disable (or at least the var is non-null)
+  if (!process.env.DISABLE_API_LIST) {
+    console.log("ℹ️ No services to disable");
+    return;
+  }
+
+  // Extract selected APIs
   const disableApiList = process.env.DISABLE_API_LIST.split(",");
   let disableFunctions = false;
   console.log(`ℹ️ List of services to disable: ${disableApiList}`);
@@ -128,7 +136,7 @@ export const executeDisableAPI = async () => {
  * @returns None
  */
 export const executeDisableBilling = async () => {
-  if (!process.env.DISABLE_BILLING) {
+  if (process.env.DISABLE_BILLING === 'false') {
     console.log("ℹ️ Disable billing is not active, skipping strategy");
     return;
   }
