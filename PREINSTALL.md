@@ -38,11 +38,10 @@ The extension monitors your project's spending through Google Cloud Billing budg
 Strategy 2 is recommended only for advanced users, as data and resource loss are expected. Additionally recovery can be complex and project specific.
 
 > ⚠️ **Important**: Both strategies will disrupt your application. Plan accordingly and test in non-production environments first.
+
 > ⚠️ **Important**: Google Cloud and Firebase report usage and cost at varying time intervals - this is platform behaviour. Therefore, expect billing information to be delayed and therefore some additional costs above your budget before services are stopped.
 
 ### Things you will need
-
-The extension is intended to do as much of the setup work as possible for you. However, due to some limitations with extensions, some manual steps are required.
 
 **Pre-installation setup**
 
