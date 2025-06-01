@@ -2,7 +2,7 @@ Automatically stop Firebase and Google Cloud services when your project reaches 
 
 This extension acts as a financial safety net for your Firebase project by automatically taking action when spending reaches your defined budget limits. When triggered, it can either remove your project's billing account or disable specific services to prevent runaway costs.
 
-Great for:
+**Great for:**
 
 - Teams or solo developers learning Firebase who want to experiment safely
 - Proof-of-concept projects
@@ -19,7 +19,7 @@ Great for:
 
 ### How It Works
 
-The extension monitors your project's spending through Google Cloud Billing budgets. When your spending reaches the configured threshold percentage, a Pub/Sub message triggers the extension. When the extension is triggered, an actions (or selected strategy) is invoked. The strategies are:
+The extension monitors your project's spending through Google Cloud Billing budgets. When your spending reaches the configured threshold percentage, a Pub/Sub message triggers the extension. When the extension is triggered, an action (or selected strategy) is invoked. The strategies are:
 
 **Strategy 1: Remove Billing Account (Recommended)**
 
@@ -38,6 +38,7 @@ The extension monitors your project's spending through Google Cloud Billing budg
 Strategy 2 is recommended only for advanced users, as data and resource loss are expected. Additionally recovery can be complex and project specific.
 
 > ⚠️ **Important**: Both strategies will disrupt your application. Plan accordingly and test in non-production environments first.
+> ⚠️ **Important**: Google Cloud and Firebase report usage and cost at varying time intervals - this is platform behaviour. Therefore, expect billing information to be delayed and therefore some additional costs above your budget before services are stopped.
 
 ### Things you will need
 
