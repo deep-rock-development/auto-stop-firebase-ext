@@ -1,3 +1,14 @@
+## Version 1.1.0
+
+Release Date: 5 June 2025
+
+- Update extension parameters for new APIs which target Firebase APIs specifically
+- Updated region locations for function deployment
+- Fixed a bug where opt-out of Strategy 1 was not possible.
+- Minor reshuffle of logging to reduce log volume.
+- Fixed a minor bug where function would throw an error if Strategy 2 was opted-out - note that this bug is purely a logging error and the extension behaves as expected.
+- Updated runtime to NodeJS v20, due to 18 deprecation
+
 ## Version 1.0.4
 
 Release Date: 13th July 2024

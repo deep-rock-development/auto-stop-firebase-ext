@@ -56,7 +56,7 @@ After the installation of this extension, you must:
 
 - Create a Budget against your project (if none exists), and connect it to the Pub/Sub topic created
 - Assign the extension's service account the `roles/billing.projectManager` role (for Strategy 1)
-- Assign the extension's service account the `roles/serviceusage.service` role (for Strategy 2)
+- Assign the extension's service account the `roles/serviceusage.serviceUsageAdmin` role (for Strategy 2)
 
 > 💡 Due to Firebase Extensions limitations, you must manually setup the budget and IAM role assignment. In future, where limitations are removed, this extension will be updated.
 
