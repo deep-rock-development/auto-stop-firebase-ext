@@ -23,6 +23,7 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: $0 [--test=1] [--prefix=custom-prefix]"
             echo "  --test=1    Define which test should be run (default: 0 - Install only)"
             echo "  --billing-id=your-billing-id  Set the billing account ID for the project"
+            echo "  --project-id=your-project-id  The project ID for executing the script"
             exit 0
             ;;
         *)
@@ -33,12 +34,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 # If no BILLING_ID or TEST_MODE is set, exit
-if [[ -z "$BILLING_ID" || -z "$TEST_MODE" ]]; then
-    echo "Error: --billing-id and --test arguments are required."
-    echo "Usage: $0 --billing-id=your-billing-id --test=1"
+if [[ -z "$BILLING_ID" || -z "$TEST_MODE" || -z "$PROJECT_ID" ]]; then
+    echo "Error: --billing-id, --test arguments, and --project-id are required."
+    echo "Usage: $0 --billing-id=your-billing-id --test=1 --project-id=your-project-id"
     exit 1
 fi
-
 
 # Link the project to the static billing account
 gcloud billing projects link $PROJECT_ID --billing-account=$BILLING_ID
