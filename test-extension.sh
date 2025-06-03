@@ -3,4 +3,46 @@
 # Exit on any error
 set -e
 
-echo "Testing GitHub Actions"
+TEST_MODE=0
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --test=*)
+            TEST_MODE="${1#*=}"
+            shift
+            ;;
+         --billing-id=*)
+            BILLING_ID="${1#*=}"
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $0 [--test=1] [--prefix=custom-prefix]"
+            echo "  --test=1    Define which test should be run (default: 0 - Install only)"
+            echo "  --billing-id=your-billing-id  Set the billing account ID for the project"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+    esac
+done
+
+# If no BILLING_ID or TEST_MODE is set, exit
+if [[ -z "$BILLING_ID" || -z "$TEST_MODE" ]]; then
+    echo "Error: --billing-id and --test arguments are required."
+    echo "Usage: $0 --billing-id=your-billing-id --test=1"
+    exit 1
+fi
+
+# Create variable with random uuid name
+PROJECT_ID="fb-test-asb-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -c1-8)"
+
+echo "Creating project: $PROJECT_ID"
+
+# Create GCP project with firebase added
+firebase projects:create $PROJECT_ID --non-interactive
+
+
+# Link the project to the static billing account
+gcloud billing projects link $PROJECT_ID --billing-account=$BILLING_ID
