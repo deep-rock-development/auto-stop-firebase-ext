@@ -21,13 +21,13 @@ jobs:
     - name: Install Firebase CLI
       run: npm install -g firebase-tools
       
-    # - name: Authenticate to Google Cloud
-    #   uses: google-github-actions/auth@v2
-    #   with:
-    #     credentials_json: ${{ secrets.GCP_SA_KEY }}
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_SECRET }}
         
-    # - name: Setup Google Cloud CLI
-    #   uses: google-github-actions/setup-gcloud@v2
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
       
     - name: Make script executable
       run: chmod +x test-extension.sh
