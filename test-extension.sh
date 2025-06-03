@@ -40,5 +40,8 @@ if [[ -z "$BILLING_ID" || -z "$TEST_MODE" || -z "$PROJECT_ID" ]]; then
     exit 1
 fi
 
+# Enable Cloud Billing API
+gcloud services enable cloudbilling.googleapis.com --project="$PROJECT_ID"
+
 # Link the project to the static billing account
 gcloud billing projects link $PROJECT_ID --billing-account=$BILLING_ID
