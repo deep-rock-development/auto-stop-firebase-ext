@@ -30,7 +30,7 @@ jobs:
     #   uses: google-github-actions/setup-gcloud@v2
       
     - name: Make script executable
-      run: chmod +x setup-project.sh
+      run: chmod +x test-extension.sh
       
     - name: Run Test 1 - Alert threshold below budget
       run: ./test-extension.sh --test=1
