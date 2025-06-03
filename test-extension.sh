@@ -15,6 +15,10 @@ while [[ $# -gt 0 ]]; do
             BILLING_ID="${1#*=}"
             shift
             ;;
+        --project-id=*)
+            PROJECT_ID="${1#*=}"
+            shift
+            ;;
         -h|--help)
             echo "Usage: $0 [--test=1] [--prefix=custom-prefix]"
             echo "  --test=1    Define which test should be run (default: 0 - Install only)"
@@ -34,14 +38,6 @@ if [[ -z "$BILLING_ID" || -z "$TEST_MODE" ]]; then
     echo "Usage: $0 --billing-id=your-billing-id --test=1"
     exit 1
 fi
-
-# Create variable with random uuid name
-PROJECT_ID="fb-test-asb-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -c1-8)"
-
-echo "Creating project: $PROJECT_ID"
-
-# Create GCP project with firebase added
-firebase projects:create $PROJECT_ID --non-interactive
 
 
 # Link the project to the static billing account

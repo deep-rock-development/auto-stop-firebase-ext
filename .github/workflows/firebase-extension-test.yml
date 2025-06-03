@@ -33,7 +33,7 @@ jobs:
       run: chmod +x test-extension.sh
       
     - name: Run Test 1 - Alert threshold below budget
-      run: ./test-extension.sh --test=1 --billing-id=${{ secrets.BILLING_ID_SECRET }}
+      run: ./test-extension.sh --test=1 --project-id=${{ secrets.PROJECT_1_SECRET }} --billing-id=${{ secrets.BILLING_ID_SECRET }}
       continue-on-error: false
       
     - name: Run Test 2 - Alert threshold equal to budget  
