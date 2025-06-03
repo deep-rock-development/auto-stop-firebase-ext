@@ -37,19 +37,19 @@ jobs:
       continue-on-error: false
       
     - name: Run Test 2 - Alert threshold equal to budget  
-      run: ./test-extension.sh --test=2 --billing-id=${{ secrets.BILLING_ID_SECRET }}
+      run: ./test-extension.sh --test=2 --project-id=${{ secrets.PROJECT_2_SECRET }} --billing-id=${{ secrets.BILLING_ID_SECRET }}
       continue-on-error: false
       
     - name: Run Test 3 - No alert threshold in message
-      run: ./test-extension.sh --test=3 --billing-id=${{ secrets.BILLING_ID_SECRET }}
+      run: ./test-extension.sh --test=3 --project-id=${{ secrets.PROJECT_3_SECRET }} --billing-id=${{ secrets.BILLING_ID_SECRET }}
       continue-on-error: false
       
     - name: Run Test 4 - Test disable APIs (some enabled)
-      run: ./test-extension.sh --test=4 --billing-id=${{ secrets.BILLING_ID_SECRET }}
+      run: ./test-extension.sh --test=4 --project-id=${{ secrets.PROJECT_4_SECRET }} --billing-id=${{ secrets.BILLING_ID_SECRET }}
       continue-on-error: false
       
     - name: Run Test 5 - Disable all APIs (all enabled)
-      run: ./test-extension.sh --test=5 --billing-id=${{ secrets.BILLING_ID_SECRET }}
+      run: ./test-extension.sh --test=5 --project-id=${{ secrets.PROJECT_5_SECRET }} --billing-id=${{ secrets.BILLING_ID_SECRET }}
       continue-on-error: false
       
     - name: Test Summary
