@@ -1,8 +1,8 @@
 # Learn detailed information about the fields of an extension.yaml file in the docs:
 # https://firebase.google.com/docs/extensions/reference/extension-yaml
 
-name: functions-auto-stop-billing #TODO: consider renaming to firebase standard <firebase-product>-<description-of-tasks-performed>
-version: 1.0.4
+name: functions-auto-stop-billing
+version: 1.1.0
 specVersion: v1beta # Version of the Firebase Extensions specification
 
 # Friendly display name for your extension (~3-5 words)
@@ -17,19 +17,20 @@ author:
   url: https://github.com/deep-rock-development
 
 icon: icon.png
-tags: [utilities]
+tags: [utilities, billing, budget, cost, stop, cease, disable, shutdown]
 
 license: Apache-2.0 # https://spdx.org/licenses/
 
 # Public URL for the source code of your extension.
 sourceUrl: https://github.com/deep-rock-development/auto-stop-firebase-ext
+releaseNotesUrl: https://github.com/deep-rock-development/auto-stop-firebase-ext/blob/main/CHANGELOG.md
 
 # Specify whether a paid-tier billing plan is required to use your extension.
-# Learn more in the docs: https://firebase.google.com/docs/extensions/reference/extension-yaml#billing-required-field
 billingRequired: true
 
 # In an `apis` field, list any Google APIs (like Cloud Translation, BigQuery, etc.)
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#apis-field
+# Also see available roles at: https://firebase.google.com/docs/extensions/publishers/access 
 apis:
   - apiName: cloudbilling.googleapis.com
     reason: Needed to manage budget and receive budget alerts.
@@ -43,7 +44,6 @@ apis:
     reason: Necessary to disable services in response to budget alerts reached.
 
 # In a `roles` field, list any IAM access roles required for your extension to operate.
-# https://firebase.google.com/docs/extensions/reference/extension-yaml#roles-field
 roles:
   - role: pubsub.editor
     reason: Create the topic that receives the budget alerts
@@ -53,14 +53,13 @@ roles:
     reason: Subscribe to a topic to receive budget alerts
 
 # In the `resources` field, list each of your extension's functions, including the trigger for each function.
-# https://firebase.google.com/docs/extensions/reference/extension-yaml#resources-field
 resources:
   - name: onInstallExtension
     type: firebaseextensions.v1beta.function
     description: >-
       Creates the resources necessary for the extension to operate.
     properties:
-      runtime: nodejs18
+      runtime: nodejs20
       location: ${LOCATION}
       taskQueueTrigger: {}
   - name: stopTriggered
@@ -68,14 +67,13 @@ resources:
     description: >-
       Stops services in response to a pub/sub message from a budget alert.
     properties:
-      runtime: nodejs18
+      runtime: nodejs20
       location: ${LOCATION}
       eventTrigger:
         eventType: google.pubsub.topic.publish
         resource: projects/${PROJECT_ID}/topics/${TOPIC_NAME}
 
 # In the `params` field, set up your extension's user-configured parameters.
-# https://firebase.google.com/docs/extensions/reference/extension-yaml#params-field
 params:
   - param: TOPIC_NAME
     label: Topic Name
@@ -91,7 +89,7 @@ params:
     required: true
   - param: DISABLE_BILLING
     label: Disable Billing (Strategy 1)
-    description: "Strategy 1: Removes the billing account from the project, stopping services from accuring costs. If Yes is selected, when the budget threshold is reached the Billing Account is removed from the project. This is the recommended strategy."
+    description: "Strategy 1: Removes the billing account from the project, stopping services from accruing costs. If Yes is selected, when the budget threshold is reached the Billing Account is removed from the project. This is the recommended strategy."
     type: select
     options:
       - label: Yes
@@ -102,19 +100,37 @@ params:
     required: true
   - param: DISABLE_API_LIST
     label: APIs to Disable (Strategy 2)
-    description: "Strategy 2: Select services to be disabled when the budget is reached. If services are selected, when a budget threshold is reached these will be deactivated. If none are selected this strategy is not used."
+    description: "Strategy 2: Select services to be disabled when the budget is reached. If services are selected, when a budget threshold is reached these will be deactivated. If none are selected this strategy is not used. Note that this strategy is only recommended for advanced users."
     type: multiSelect
     options:
+      - label: Firebase Storage
+        value: firebasestorage.googleapis.com
+      - label: Cloud Functions (Firebase Functions)
+        value: cloudfunctions.googleapis.com
+      - label: Firestore
+        value: firestore.googleapis.com
+      - label: Firebase Hosting
+        value: firebasehosting.googleapis.com
+      - label: Firebase Realtime Database
+        value: firebasedatabase.googleapis.com
+      - label: Firebase ML
+        value: firebaseml.googleapis.com
+      - label: Firebase ML Kit
+        value: mlkit.googleapis.com
+      - label: Firebase Vertex AI
+        value: firebasevertexai.googleapis.com
+      - label: Firebase Cloud Messaging
+        value: fcm.googleapis.com
+      - label: Firebase Authentication
+        value: identitytoolkit.googleapis.com
+      - label: Firebase Extensions
+        value: firebaseextensions.googleapis.com
+      - label: Pub/Sub
+        value: pubsub.googleapis.com
       - label: Compute
         value: compute.googleapis.com
       - label: Storage
         value: storage.googleapis.com
-      - label: Cloud Functions (incl. Firebase Functions)
-        value: cloudfunctions.googleapis.com
-      - label: Firestore
-        value: firestore.googleapis.com
-      - label: Pub/Sub
-        value: pubsub.googleapis.com
     required: false
   - param: LOCATION
     label: Cloud Functions Location
@@ -141,6 +157,34 @@ params:
         value: southamerica-east1
       - label: Tokyo (asia-northeast1)
         value: asia-northeast1
+      - label: Northern Virginia (us-east4)
+        value: us-east4
+      - label: Oregon (us-west1)
+        value: us-west1
+      - label: Los Angeles (us-west2)
+        value: us-west2
+      - label: Salt Lake City (us-west3)
+        value: us-west3
+      - label: Las Vegas (us-west4)
+        value: us-west4
+      - label: Warsaw (europe-central2)
+        value: europe-central2
+      - label: Frankfurt (europe-west3)
+        value: europe-west3
+      - label: Zurich (europe-west6)
+        value: europe-west6
+      - label: Hong Kong (asia-east2)
+        value: asia-east2
+      - label: Osaka (asia-northeast2)
+        value: asia-northeast2
+      - label: Seoul (asia-northeast3)
+        value: asia-northeast3
+      - label: Singapore (asia-southeast1)
+        value: asia-southeast1
+      - label: Jakarta (asia-southeast2)
+        value: asia-southeast2
+      - label: Montreal (northamerica-northeast1)
+        value: northamerica-northeast1
 
 lifecycleEvents:
   onInstall:

@@ -1,10 +1,14 @@
+For help with installing or using this extension, you can go to the [Auto Stop Extension Documentation](https://deep-rock.gitbook.io/auto-stop-services).
+
+> 💡 Due to Firebase Extensions limitations, you must manually setup the budget and IAM role assignment. In future, where limitations are removed, this extension will be updated.
+
 ### Post-installation steps
 
 After the installation of this extension, you must:
 
 - Create a Budget against your project (if none exists), and connect it to the Pub/Sub topic created
 - Assign the extension's service account the `roles/billing.projectManager` role (for Strategy 1)
-- Assign the extension's service account the `roles/serviceusage.service` role (for Strategy 2)
+- Assign the extension's service account the `roles/serviceusage.serviceUsageAdmin` role (for Strategy 2)
 
 Further detail is provided below.
 
@@ -13,11 +17,11 @@ Further detail is provided below.
 This extension requires the following post-installation steps:
 
 1. Create a budget if none exists:
-   - **Firebase**: Go to Settings > Usage & Billing. Set a budget and note its name (Recommended)
-   - **GCP**: Navigate to Billing > Budgets. Create a new budget, set it, and note the budget name.
-2. Check that your budget is configured correctly - ensure that there is a threshold of 100%.
+   - **Firebase**: Go to Settings > Usage & Billing. Set a budget.
+   - **GCP**: Navigate to Billing > Budgets. Create a new budget.
+2. Click the 'View budgets' button, select your budget, and ensure that there is an alert threshold at 100%.
 3. Edit the Budget to connect it to the Pub/Sub topic created by the extension, this is the `TOPIC_NAME` you set. The setting is 'Connect a Pub/Sub topic to this budget' when editing.
-4. Under IAM, assign the extension's service account (`ext-functions-auto-stop-billing@{PROJECT_ID}.iam.gserviceaccount.com`) the relevant IAM roles:
+4. Under the IAM service in GCP, assign the extension's service account (`ext-functions-auto-stop-billing@{PROJECT_ID}.iam.gserviceaccount.com`) the relevant IAM roles:
    - **Strategy 1**: Project Billing Manager (`roles/billing.projectManager`)
    - **Strategy 2**: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
 
@@ -43,7 +47,7 @@ The budget will generate messages and send them to the topic, these messages are
 }
 ```
 
-The field `alertThresholdExceeded` is monitored by the extension, and will determine whether or not to take action. Where the value of this field meets or exceeds the parameter `BUDGET_STOP_THRESHOLD_PERCENT` then the strategy is executed.
+The field `alertThresholdExceeded` is monitored by the extension, and will determine whether or not to take action. Where the value of this field meets or exceeds the parameter `BUDGET_STOP_THRESHOLD_PERCENT` then the strategy is executed. If this field is not present, the extension will not take action.
 
 ### Testing permissions
 
@@ -63,12 +67,16 @@ This extension is aimed at supporting Firebase users to prevent cost-overrun. Th
 
 - Review and confirm Service Account permissions includes the roles assigned to the extension's service account are sufficient to perform its tasks.
 - Even with this extension, you should monitor your Google Cloud costs and usage through the Google Cloud Console.
-- Remember, disabling essential services can impact your application's functionality. Plan and test carefully. Please consider capturing your configuration through your code repository (versus click ops).
+- Please consider capturing your configuration through your code repository (versus click ops).
 
-Unfortunately due to Firebase Extensions limitations, there are specific setup activities must be carried out manually. These are the creation of a budget and IAM role assignment. However, this extension has been created to minimise the amount of work that is required. In future, where limitations are removed, this extension will be updated.
+> ⚠️ **Important**: Both strategies will disrupt your application. Plan accordingly and test in non-production environments first.
 
-However the repository is active, and any proposed changes are welcome!
+> ⚠️ **Important**: Google Cloud and Firebase report usage and cost at varying time intervals - this is platform behaviour. Therefore, expect billing information to be delayed and therefore some additional costs above your budget before services are stopped.
 
-### Getting Help
+### Need Help?
 
-For issues or questions about this extension, check the [GitHub repository](https://github.com/deep-rock-development/auto-stop-firebase-ext) or reach out through Firebase support.
+This extension is open source and welcomes contributions:
+
+- ➡️ **Repository**: [GitHub Repository](https://github.com/deep-rock-development/auto-stop-firebase-ext)
+- 🐛 **Bug reports**: [File an issue](https://github.com/deep-rock-development/auto-stop-firebase-ext/issues)
+- 📖 **Documentation**: [Auto Stop Extension Documentation](https://deep-rock.gitbook.io/auto-stop-services)

@@ -1,0 +1,4 @@
+BUDGET_STOP_THRESHOLD_PERCENT=1.0
+DISABLE_BILLING=true
+LOCATION=us-central1
+TOPIC_NAME=ext-firebase-trigger-auto-stop

@@ -1,0 +1,5 @@
+BUDGET_STOP_THRESHOLD_PERCENT=1.0
+DISABLE_BILLING=false
+DISABLE_API_LIST=firebasestorage.googleapis.com,cloudfunctions.googleapis.com,firestore.googleapis.com,firebasehosting.googleapis.com,firebasedatabase.googleapis.com,firebaseml.googleapis.com,mlkit.googleapis.com,firebasevertexai.googleapis.com,fcm.googleapis.com,identitytoolkit.googleapis.com,firebaseextensions.googleapis.com,pubsub.googleapis.com,compute.googleapis.com,storage.googleapis.com
+LOCATION=us-central1
+TOPIC_NAME=ext-firebase-trigger-auto-stop
