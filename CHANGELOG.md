@@ -1,3 +1,9 @@
+## Version 1.1.1
+
+Release Date: 6 June 2025
+
+- Updated License
+
 ## Version 1.1.0
 
 Release Date: 5 June 2025
