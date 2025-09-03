@@ -172,7 +172,7 @@ case "$TEST_MODE" in
         ENABLED_APIS=$(gcloud services list --enabled --format="value(config.name)" --project=$PROJECT_ID)
         echo $ENABLED_APIS
         # APIs that should be disabled
-        DISABLED_API_LIST="firebasestorage.googleapis.com,cloudfunctions.googleapis.com,firestore.googleapis.com,firebasehosting.googleapis.com,firebasedatabase.googleapis.com,firebaseml.googleapis.com,mlkit.googleapis.com,firebasevertexai.googleapis.com,fcm.googleapis.com,identitytoolkit.googleapis.com,firebaseextensions.googleapis.com,pubsub.googleapis.com,compute.googleapis.com,storage.googleapis.com"
+        DISABLED_API_LIST="firebasestorage.googleapis.com,cloudfunctions.googleapis.com,firestore.googleapis.com,firebasehosting.googleapis.com,firebasedatabase.googleapis.com,firebaseml.googleapis.com,mlkit.googleapis.com,firebasevertexai.googleapis.com,speech.googleapis.com,fcm.googleapis.com,identitytoolkit.googleapis.com,firebaseextensions.googleapis.com,pubsub.googleapis.com,compute.googleapis.com,storage.googleapis.com"
         
         # Check if any of the APIs from the disable list are still enabled
         FOUND_ENABLED=false
@@ -196,7 +196,7 @@ case "$TEST_MODE" in
 
         # enable the APIs first
         echo "TEST 5: [RUNNING] - Enabling APIs before testing disable"
-        API_LIST="firebasestorage.googleapis.com,cloudfunctions.googleapis.com,firestore.googleapis.com,firebasehosting.googleapis.com,firebasedatabase.googleapis.com,firebaseml.googleapis.com,mlkit.googleapis.com,firebasevertexai.googleapis.com,fcm.googleapis.com,identitytoolkit.googleapis.com,firebaseextensions.googleapis.com,pubsub.googleapis.com,compute.googleapis.com,storage.googleapis.com"
+        API_LIST="firebasestorage.googleapis.com,cloudfunctions.googleapis.com,firestore.googleapis.com,firebasehosting.googleapis.com,firebasedatabase.googleapis.com,firebaseml.googleapis.com,mlkit.googleapis.com,firebasevertexai.googleapis.com,speech.googleapis.com,fcm.googleapis.com,identitytoolkit.googleapis.com,firebaseextensions.googleapis.com,pubsub.googleapis.com,compute.googleapis.com,storage.googleapis.com"
         
         # Enable APIs one by one
         IFS=',' read -ra APIS <<< "$API_LIST"
