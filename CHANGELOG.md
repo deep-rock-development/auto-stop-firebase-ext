@@ -1,3 +1,9 @@
+## Version 1.1.2
+
+Release Date: 9 September 2025
+
+- Updated API list to include Speech API
+
 ## Version 1.1.1
 
 Release Date: 6 June 2025
