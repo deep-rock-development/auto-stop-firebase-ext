@@ -30,7 +30,7 @@ billingRequired: true
 
 # In an `apis` field, list any Google APIs (like Cloud Translation, BigQuery, etc.)
 # https://firebase.google.com/docs/extensions/reference/extension-yaml#apis-field
-# Also see available roles at: https://firebase.google.com/docs/extensions/publishers/access 
+# Also see available roles at: https://firebase.google.com/docs/extensions/publishers/access
 apis:
   - apiName: cloudbilling.googleapis.com
     reason: Needed to manage budget and receive budget alerts.
@@ -119,6 +119,8 @@ params:
         value: mlkit.googleapis.com
       - label: Firebase Vertex AI
         value: firebasevertexai.googleapis.com
+      - label: Google Speech-to-Text
+        value: speech.googleapis.com
       - label: Firebase Cloud Messaging
         value: fcm.googleapis.com
       - label: Firebase Authentication
