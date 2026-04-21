@@ -2,6 +2,9 @@
   "name": "auto-stop-firebase-ext",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": "22"
+  },
   "dependencies": {
     "@google-cloud/billing": "^4.3.0",
     "@google-cloud/billing-budgets": "^5.2.0",

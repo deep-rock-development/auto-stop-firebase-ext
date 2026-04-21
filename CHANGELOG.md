@@ -1,3 +1,9 @@
+## Version 1.1.3
+
+Release Date: 21 April 2026
+
+- Updated runtime to NodeJS v22, due to v20 deprecation
+
 ## Version 1.1.2
 
 Release Date: 9 September 2025
