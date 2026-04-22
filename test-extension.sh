@@ -11,14 +11,19 @@ while [[ $# -gt 0 ]]; do
             TEST_MODE="${1#*=}"
             shift
             ;;
-         --billing-id=*)
+        --project-id=*)
+            PROJECT_ID="${1#*=}"
+            shift
+            ;;
+        --billing-id=*)
             BILLING_ID="${1#*=}"
             shift
             ;;
         -h|--help)
-            echo "Usage: $0 [--test=1] [--prefix=custom-prefix]"
-            echo "  --test=1    Define which test should be run (default: 0 - Install only)"
-            echo "  --billing-id=your-billing-id  Set the billing account ID for the project"
+            echo "Usage: $0 --project-id=your-project-id --test=1 [--billing-id=your-billing-id]"
+            echo "  --project-id=your-project-id  Pre-existing GCP/Firebase project ID"
+            echo "  --test=1                       Define which test to run (default: 0 - install only)"
+            echo "  --billing-id=your-billing-id   Required only if billing is not already linked"
             exit 0
             ;;
         *)
@@ -28,21 +33,14 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# If no BILLING_ID or TEST_MODE is set, exit
-if [[ -z "$BILLING_ID" || -z "$TEST_MODE" ]]; then
-    echo "Error: --billing-id and --test arguments are required."
-    echo "Usage: $0 --billing-id=your-billing-id --test=1"
+# If no PROJECT_ID or TEST_MODE is set, exit
+if [[ -z "$PROJECT_ID" || -z "$TEST_MODE" ]]; then
+    echo "Error: --project-id and --test arguments are required."
+    echo "Usage: $0 --project-id=your-project-id --test=1"
     exit 1
 fi
 
-
-# Create GCP project with firebase added
-PROJECT_ID="fb-test-asb-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -c1-8)"
-echo "Creating project: $PROJECT_ID"
-firebase projects:create $PROJECT_ID --non-interactive
-
-# Link the project to the static billing account
-gcloud billing projects link $PROJECT_ID --billing-account=$BILLING_ID
+echo "Using project: $PROJECT_ID"
 
 # Deploy extension with retry logic (IAM propagation can take a while)
 echo "Deploying extension with retry logic..."
@@ -256,9 +254,18 @@ if [ "$TEST_MODE" -eq 0 ]; then
     exit 0
 fi
 
-# Clean up resources (close project)
+# Clean up resources (budget + extension, project is reused)
 echo "Cleaning up resources..."
-gcloud projects delete $PROJECT_ID --quiet
+
+BUDGET_NAME=$(gcloud billing budgets list --billing-account=$BILLING_ID \
+  --format="value(name)" --filter="displayName=$PROJECT_ID-budget" 2>/dev/null || true)
+if [[ -n "$BUDGET_NAME" ]]; then
+    gcloud billing budgets delete "$BUDGET_NAME" --billing-account=$BILLING_ID --quiet
+    echo "Budget deleted."
+fi
+
+firebase ext:uninstall functions-auto-stop-billing --project=$PROJECT_ID --force 2>/dev/null || true
+echo "Extension uninstalled."
 
 
 echo "Script execution completed!"
