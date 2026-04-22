@@ -3,6 +3,19 @@
 # Exit on any error
 set -e
 
+cleanup() {
+    echo "Cleaning up resources..."
+    if [[ -n "$BILLING_ID" ]]; then
+        BUDGET_NAME=$(gcloud billing budgets list --billing-account=$BILLING_ID \
+          --format="value(name)" --filter="displayName=$PROJECT_ID-budget" 2>/dev/null || true)
+        if [[ -n "$BUDGET_NAME" ]]; then
+            gcloud billing budgets delete "$BUDGET_NAME" --billing-account=$BILLING_ID --quiet && echo "Budget deleted."
+        fi
+    fi
+    firebase ext:uninstall functions-auto-stop-billing --project=$PROJECT_ID --force 2>/dev/null || true
+    echo "Extension uninstalled."
+}
+
 TEST_MODE=0
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -41,6 +54,7 @@ if [[ -z "$PROJECT_ID" || -z "$TEST_MODE" ]]; then
 fi
 
 echo "Using project: $PROJECT_ID"
+trap cleanup EXIT
 
 # Deploy extension with retry logic (IAM propagation can take a while)
 echo "Deploying extension with retry logic..."
@@ -247,25 +261,5 @@ case "$TEST_MODE" in
         exit 1
         ;;
 esac
-
-# If test mode is 0, skip cleanup
-if [ "$TEST_MODE" -eq 0 ]; then
-    echo "Skipping cleanup as test mode is 0 (installation only)."
-    exit 0
-fi
-
-# Clean up resources (budget + extension, project is reused)
-echo "Cleaning up resources..."
-
-BUDGET_NAME=$(gcloud billing budgets list --billing-account=$BILLING_ID \
-  --format="value(name)" --filter="displayName=$PROJECT_ID-budget" 2>/dev/null || true)
-if [[ -n "$BUDGET_NAME" ]]; then
-    gcloud billing budgets delete "$BUDGET_NAME" --billing-account=$BILLING_ID --quiet
-    echo "Budget deleted."
-fi
-
-firebase ext:uninstall functions-auto-stop-billing --project=$PROJECT_ID --force 2>/dev/null || true
-echo "Extension uninstalled."
-
 
 echo "Script execution completed!"
