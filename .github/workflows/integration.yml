@@ -11,21 +11,31 @@ on:
     branches: [main]
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          ALL='[{"id":1,"name":"S1 - Threshold below budget"},{"id":2,"name":"S1 - Threshold at budget"},{"id":3,"name":"S1 - No threshold in payload"},{"id":4,"name":"S2 - Disable APIs (some enabled)"},{"id":5,"name":"S2 - Disable APIs (all enabled)"}]'
+          TEST="${{ github.event.inputs.test }}"
+          if [[ "$TEST" == "0" || -z "$TEST" ]]; then
+            echo "matrix={\"test-mode\":$ALL}" >> $GITHUB_OUTPUT
+          else
+            ENTRY=$(echo "$ALL" | jq -c "[.[] | select(.id == ($TEST | tonumber))]")
+            echo "matrix={\"test-mode\":$ENTRY}" >> $GITHUB_OUTPUT
+          fi
+
   integration:
+    needs: setup
     name: Test ${{ matrix.test-mode.name }}
     runs-on: ubuntu-latest
     environment: integration
     strategy:
       fail-fast: false
       max-parallel: 1
-      matrix:
-        test-mode:
-          - { id: 1, name: "S1 - Threshold below budget" }
-          - { id: 2, name: "S1 - Threshold at budget" }
-          - { id: 3, name: "S1 - No threshold in payload" }
-          - { id: 4, name: "S2 - Disable APIs (some enabled)" }
-          - { id: 5, name: "S2 - Disable APIs (all enabled)" }
-    if: ${{ github.event.inputs.test == '0' || github.event.inputs.test == '' || github.event.inputs.test == matrix.test-mode.id || github.event_name == 'push' }}
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v4
