@@ -23,3 +23,5 @@ jobs:
       - name: Run tests
         run: npm test
         working-directory: functions
+        env:
+          TOPIC_NAME: test-topic
