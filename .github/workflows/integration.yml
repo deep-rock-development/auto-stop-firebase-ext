@@ -1,0 +1,63 @@
+name: Integration Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test to run (1-5, or 0 for all)'
+        required: false
+        default: '0'
+  push:
+    branches: [main]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          ALL='[{"id":1,"name":"S1 - Threshold below budget"},{"id":2,"name":"S1 - Threshold at budget"},{"id":3,"name":"S1 - No threshold in payload"},{"id":4,"name":"S2 - Disable APIs (some enabled)"},{"id":5,"name":"S2 - Disable APIs (all enabled)"}]'
+          TEST="${{ github.event.inputs.test }}"
+          if [[ "$TEST" == "0" || -z "$TEST" ]]; then
+            echo "matrix={\"test-mode\":$ALL}" >> $GITHUB_OUTPUT
+          else
+            ENTRY=$(echo "$ALL" | jq -c "[.[] | select(.id == ($TEST | tonumber))]")
+            echo "matrix={\"test-mode\":$ENTRY}" >> $GITHUB_OUTPUT
+          fi
+
+  integration:
+    needs: setup
+    name: Test ${{ matrix.test-mode.name }}
+    runs-on: ubuntu-latest
+    environment: integration
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Run test
+        run: |
+          chmod +x test-extension.sh
+          ./test-extension.sh \
+            --project-id=${{ secrets.GCP_PROJECT_ID }} \
+            --billing-id=${{ secrets.GCP_BILLING_ID }} \
+            --test=${{ matrix.test-mode.id }}
