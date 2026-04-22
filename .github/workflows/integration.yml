@@ -2,6 +2,11 @@ name: Integration Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test to run (1-5, or 0 for all)'
+        required: false
+        default: '0'
   push:
     branches: [main]
 
@@ -12,6 +17,7 @@ jobs:
     environment: integration
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         test-mode:
           - { id: 1, name: "S1 - Threshold below budget" }
@@ -19,6 +25,7 @@ jobs:
           - { id: 3, name: "S1 - No threshold in payload" }
           - { id: 4, name: "S2 - Disable APIs (some enabled)" }
           - { id: 5, name: "S2 - Disable APIs (all enabled)" }
+    if: ${{ github.event.inputs.test == '0' || github.event.inputs.test == '' || github.event.inputs.test == matrix.test-mode.id || github.event_name == 'push' }}
 
     steps:
       - uses: actions/checkout@v4
