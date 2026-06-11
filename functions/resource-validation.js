@@ -6,7 +6,6 @@ const projectsClient = new ProjectsClient();
 export const testIamPermissions = async (projectId) => {
   const resource = `projects/${projectId}`;
   const permissions = [
-    "serviceusage.services.disable",
     "resourcemanager.projects.deleteBillingAssignment",
   ];
 

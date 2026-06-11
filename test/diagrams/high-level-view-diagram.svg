@@ -1,0 +1,123 @@
+<svg width="1058" height="301" viewBox="0 0 1058 301" xmlns="http://www.w3.org/2000/svg">
+  <!-- canvas + frame -->
+  <rect x="0" y="0" width="1058" height="301" fill="#ffffff"/>
+  <rect x="6" y="6" width="1046" height="289" fill="none" stroke="#dadce0" stroke-width="2" rx="2"/>
+
+  <!-- title -->
+  <text x="26" y="38" font-size="20" fill="#202124">High Level Overview</text>
+
+  <defs>
+    <polygon id="hex" points="-34,0 -17,-29.4 17,-29.4 34,0 17,29.4 -17,29.4"/>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L8,4.5 L0,9 z" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+
+  <!-- ============ Google Cloud logo (simplified, top right) ============ -->
+  <g transform="translate(1012,32)">
+    <path d="M-14,4 a12 12 0 0 1 22,-7 a9 9 0 0 1 6,16 l-26,0 a8 8 0 0 1 -2,-9 z"
+          fill="none" stroke="#9aa0a6" stroke-width="0"/>
+    <path d="M6,-9 a12.5 12.5 0 0 0 -19,4" fill="none" stroke="#ea4335" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-13,-5 a12.5 12.5 0 0 0 -4,13" fill="none" stroke="#fbbc04" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-17,8 a12.5 12.5 0 0 0 11,8 l8,0" fill="none" stroke="#34a853" stroke-width="5" stroke-linecap="round"/>
+    <path d="M2,16 a12.5 12.5 0 0 0 4,-25" fill="none" stroke="#4285f4" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ============ Firebase services box ============ -->
+  <g transform="translate(30,78)">
+    <rect width="415" height="145" fill="#1a8cf0"/>
+    <!-- firebase flame (simplified) -->
+    <g transform="translate(72,62)">
+      <path d="M -16,28 L -8,-30 L 2,-12 Z" fill="#ffa000"/>
+      <path d="M -16,28 L 6,-22 L 14,-6 Z" fill="#f57c00" opacity="0.9"/>
+      <path d="M -16,28 L 14,-6 L 20,28 A 38 38 0 0 1 -16,28 Z" fill="#ffca28"/>
+    </g>
+    <text x="72" y="122" font-size="17" fill="#ffffff" text-anchor="middle">Firebase</text>
+
+    <!-- service circles -->
+    <g transform="translate(165,72)">
+      <circle r="26" fill="#ffc400"/>
+      <text x="0" y="7" font-size="17" fill="#ffffff" text-anchor="middle" font-family="Roboto Mono, monospace">(...)</text>
+    </g>
+    <g transform="translate(232,72)">
+      <circle r="26" fill="#ffc400"/>
+      <!-- layers glyph -->
+      <path d="M0,-12 L14,-3 L0,6 L-14,-3 Z" fill="#ffffff"/>
+      <path d="M-14,4 L0,13 L14,4" fill="none" stroke="#ffffff" stroke-width="3"/>
+    </g>
+    <g transform="translate(299,72)">
+      <circle r="26" fill="#ffc400"/>
+      <!-- people glyph -->
+      <circle cx="-6" cy="-5" r="5.5" fill="#ffffff"/>
+      <circle cx="8" cy="-3" r="4.5" fill="#ffffff"/>
+      <path d="M-15,12 a9.5 9.5 0 0 1 19,0 z" fill="#ffffff"/>
+      <path d="M1,12 a7.5 7.5 0 0 1 15,0 z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(366,72)">
+      <circle r="26" fill="#ffc400"/>
+      <circle cx="-9" cy="0" r="3" fill="#ffffff"/>
+      <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+      <circle cx="9" cy="0" r="3" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- arrow: firebase box -> billing alert -->
+  <line x1="445" y1="150" x2="492" y2="150" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Billing Alert ============ -->
+  <g transform="translate(534,150)">
+    <circle r="32" fill="#4285f4"/>
+    <rect x="-16" y="-10" width="32" height="21" rx="3" fill="#ffffff"/>
+    <rect x="-16" y="-4" width="32" height="5.5" fill="#4285f4"/>
+    <circle cx="8.5" cy="5.5" r="3.8" fill="#aecbfa"/>
+    <circle cx="23" cy="-22" r="10.5" fill="#ea4335"/>
+    <rect x="21.8" y="-27.7" width="2.4" height="7.6" rx="1.2" fill="#ffffff"/>
+    <circle cx="23" cy="-17.6" r="1.5" fill="#ffffff"/>
+    <text x="0" y="54" font-size="15" fill="#202124" text-anchor="middle">Billing Alert</text>
+  </g>
+
+  <!-- arrow -->
+  <line x1="571" y1="150" x2="624" y2="150" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Cloud Pub/Sub ============ -->
+  <g transform="translate(670,150)">
+    <use href="#hex" fill="#4285f4"/>
+    <g stroke="#ffffff" stroke-width="2.4">
+      <line x1="0" y1="0" x2="0" y2="-14"/>
+      <line x1="0" y1="0" x2="-12" y2="9"/>
+      <line x1="0" y1="0" x2="12" y2="9"/>
+    </g>
+    <circle cx="0" cy="0" r="5.5" fill="#ffffff"/>
+    <circle cx="0" cy="-15" r="4" fill="#ffffff"/>
+    <circle cx="-13" cy="10" r="4" fill="#ffffff"/>
+    <circle cx="13" cy="10" r="4" fill="#ffffff"/>
+    <text x="0" y="56" font-size="15" fill="#202124" text-anchor="middle">Cloud</text>
+    <text x="0" y="75" font-size="15" fill="#202124" text-anchor="middle">Pub/Sub</text>
+  </g>
+
+  <!-- arrow -->
+  <line x1="710" y1="150" x2="763" y2="150" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Billing Action (Function) ============ -->
+  <g transform="translate(810,150)">
+    <use href="#hex" fill="#4285f4"/>
+    <text x="-16" y="8" font-size="24" fill="#ffffff" text-anchor="middle" font-family="Roboto Mono, monospace">(</text>
+    <text x="16" y="8" font-size="24" fill="#ffffff" text-anchor="middle" font-family="Roboto Mono, monospace">)</text>
+    <circle cx="-7" cy="0" r="2.4" fill="#ffffff"/>
+    <circle cx="0" cy="0" r="2.4" fill="#ffffff"/>
+    <circle cx="7" cy="0" r="2.4" fill="#ffffff"/>
+    <text x="0" y="56" font-size="15" fill="#202124" text-anchor="middle">Billing Action</text>
+    <text x="0" y="75" font-size="15" fill="#202124" text-anchor="middle">(Function)</text>
+  </g>
+
+  <!-- arrow -->
+  <line x1="850" y1="150" x2="903" y2="150" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Billing API ============ -->
+  <g transform="translate(950,150)">
+    <use href="#hex" fill="#4285f4"/>
+    <polygon points="-13,0 -6.5,-11.3 6.5,-11.3 13,0 6.5,11.3 -6.5,11.3" fill="none" stroke="#ffffff" stroke-width="2.4"/>
+    <circle cx="0" cy="0" r="3.4" fill="#ffffff"/>
+    <text x="0" y="56" font-size="15" fill="#202124" text-anchor="middle">Billing API</text>
+  </g>
+</svg>

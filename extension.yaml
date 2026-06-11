@@ -2,7 +2,7 @@
 # https://firebase.google.com/docs/extensions/reference/extension-yaml
 
 name: functions-auto-stop-billing
-version: 1.1.3
+version: 2.0.0
 specVersion: v1beta # Version of the Firebase Extensions specification
 
 # Friendly display name for your extension (~3-5 words)
@@ -40,8 +40,6 @@ apis:
     reason: Necessary to deploy and execute functions that respond to budget alerts.
   - apiName: billingbudgets.googleapis.com
     reason: Necessary to create and manage budgets.
-  - apiName: serviceusage.googleapis.com
-    reason: Necessary to disable services in response to budget alerts reached.
 
 # In a `roles` field, list any IAM access roles required for your extension to operate.
 roles:
@@ -88,8 +86,8 @@ params:
     default: 1.0
     required: true
   - param: DISABLE_BILLING
-    label: Disable Billing (Strategy 1)
-    description: "Strategy 1: Removes the billing account from the project, stopping services from accruing costs. If Yes is selected, when the budget threshold is reached the Billing Account is removed from the project. This is the recommended strategy."
+    label: Disable Billing
+    description: "Removes the billing account from the project, stopping services from accruing costs. If Yes is selected, when the budget threshold is reached the Billing Account is removed from the project."
     type: select
     options:
       - label: Yes
@@ -98,42 +96,6 @@ params:
         value: false
     default: true
     required: true
-  - param: DISABLE_API_LIST
-    label: APIs to Disable (Strategy 2)
-    description: "Strategy 2: Select services to be disabled when the budget is reached. If services are selected, when a budget threshold is reached these will be deactivated. If none are selected this strategy is not used. Note that this strategy is only recommended for advanced users."
-    type: multiSelect
-    options:
-      - label: Firebase Storage
-        value: firebasestorage.googleapis.com
-      - label: Cloud Functions (Firebase Functions)
-        value: cloudfunctions.googleapis.com
-      - label: Firestore
-        value: firestore.googleapis.com
-      - label: Firebase Hosting
-        value: firebasehosting.googleapis.com
-      - label: Firebase Realtime Database
-        value: firebasedatabase.googleapis.com
-      - label: Firebase ML
-        value: firebaseml.googleapis.com
-      - label: Firebase ML Kit
-        value: mlkit.googleapis.com
-      - label: Firebase Vertex AI
-        value: firebasevertexai.googleapis.com
-      - label: Google Speech-to-Text
-        value: speech.googleapis.com
-      - label: Firebase Cloud Messaging
-        value: fcm.googleapis.com
-      - label: Firebase Authentication
-        value: identitytoolkit.googleapis.com
-      - label: Firebase Extensions
-        value: firebaseextensions.googleapis.com
-      - label: Pub/Sub
-        value: pubsub.googleapis.com
-      - label: Compute
-        value: compute.googleapis.com
-      - label: Storage
-        value: storage.googleapis.com
-    required: false
   - param: LOCATION
     label: Cloud Functions Location
     description: The location where the Cloud Functions will be deployed.

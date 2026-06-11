@@ -11,12 +11,9 @@ See also: [Auto Stop Services](https://deep-rock.gitbook.io/auto-stop-services) 
 ## How does it work?
 
 ![High Level View of Extension](high-level-view-diagram.png)
-This Firebase extension monitors the associated budget and implements one of two strategies when a specified budget threshold is reached:
+This Firebase extension monitors the associated budget and removes the billing account from the project when a specified budget threshold is reached.
 
-1. **Remove billing account from the project** (Strategy 1)
-2. **Disable predefined services** (Strategy 2)
-
-### Strategy 1: Removing the Billing Account from Project
+### Removing the Billing Account from Project
 
 When a billing account is removed from a project:
 
@@ -28,17 +25,7 @@ When a billing account is removed from a project:
 
 This strategy prevents additional costs from accruing but has an immediate impact on service availability.
 
-### Strategy 2: Disable Predefined Services
-
-When specific services are disabled (e.g., `compute.googleapis.com`, `cloudfunctions.googleapis.com`):
-
-- **Service-Specific Impact**: The disabled service immediately stops all operations. For instance, disabling `compute.googleapis.com` halts all running VM instances, and disabling `cloudfunctions.googleapis.com` stops all Cloud Functions executions.
-- **No New Resources**: Creating new resources for the disabled services is not possible. Attempts to do so will result in errors.
-- **Existing Resources**: Existing resources for the disabled service remain in place but become inactive. For VM instances, they are stopped; for Cloud Functions, they are not invokable.
-- **Data and Configuration Preservation**: Configurations, data, and settings related to the disabled service are preserved, allowing service resumption by re-enabling.
-- **Billing**: Disabling a service stops new billing for that service, though charges may still accrue for storage and other passive resources.
-
-This strategy offers granular control over cost management by allowing selective service suspension while preserving critical operational functionality.
+> ℹ️ **Note**: Earlier versions (1.x) offered a second strategy that disabled selected service APIs. This was removed in 2.0.0 because Google's Service Usage API no longer allows disabling a service that has existing resources (see the [CHANGELOG](CHANGELOG.md) for details and the [Google documentation reference](https://docs.cloud.google.com/service-usage/docs/hierarchical-service-activation/manage-enablement)).
 
 ## Installation Configuration
 
@@ -47,8 +34,7 @@ During the extension installation, you will be asked to configure it with the fo
 
 - `TOPIC_NAME` defines the name of the pub/sub topic. A billing alert is published here, which will trigger the auto-stop (if the threshold is reached).
 - `BUDGET_STOP_THRESHOLD_PERCENT` defines the percentage (0.0-1.0) of the budget that will trigger the stop strategy, default is 1.0 (100%)
-- `DISABLE_BILLING` enables strategy 1 - to remove the billing account (requires `project billing manager` role), defaults to false
-- `DISABLE_API_LIST` enables strategy 2 - to disable services (requires `service usage admin` role), defaults to none (empty)
+- `DISABLE_BILLING` enables removal of the billing account (requires `project billing manager` role), defaults to true
 - `LOCATION` defines the deployment location for the cloud function, defaults to use-central1
 
 ## Manual Steps After Installation
@@ -65,11 +51,8 @@ After installing the extension, you must:
    - Link the budget to the topic specified when installed the extension: `{TOPIC_NAME}`.
 
 3. **Update the Service Account Permissions**
-   - Grant the following IAM roles to `{EXTENSION_NAME}@{PROJECT_ID}.iam.gserviceaccount.com`:
-     - **Strategy 1:** Grant Project Billing Manager (`roles/billing.projectManager`) to manage project billing settings.
-     - **Strategy 2:** Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`) for enabling/disabling service APIs.
-
-**Note**: Disabling the Cloud Functions service API (`cloudfunctions.googleapis.com`) will remove the extension's functions, effectively uninstalling the extension. This will always be disabled last.
+   - Grant the following IAM role to `{EXTENSION_NAME}@{PROJECT_ID}.iam.gserviceaccount.com`:
+     - Project Billing Manager (`roles/billing.projectManager`) to manage project billing settings.
 
 ## Example Pub/Sub Message
 

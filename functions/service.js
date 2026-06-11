@@ -2,8 +2,6 @@
 
 import { getExtensions } from "firebase-admin/extensions";
 import { createTopic } from "./pubsub.js";
-import { disableService } from "./service-usage.js";
-import * as Constants from "./constants.js";
 import { disableBillingForProject } from "./budget.js";
 import { testIamPermissions } from "./resource-validation.js";
 
@@ -81,52 +79,6 @@ export const stopServices = async (message) => {
  */
 export const executeDisable = async () => {
   await executeDisableBilling();
-  await executeDisableAPI();
-};
-/**
- * Validates that there is a list of services provided.
- *  If none, ignore this process
- *  If services selected, explicitly disable these services
- * @returns None
- */
-export const executeDisableAPI = async () => {
-  
-  // Validate that there are services to disable (or at least the var is non-null)
-  if (!process.env.DISABLE_API_LIST) {
-    console.log("ℹ️ No services to disable");
-    return;
-  }
-
-  // Extract selected APIs
-  const disableApiList = process.env.DISABLE_API_LIST.split(",");
-  let disableFunctions = false;
-  console.log(`ℹ️ List of services to disable: ${disableApiList}`);
-
-  // Validate that there are services to disable
-  if (disableApiList.length === 0) {
-    console.log("ℹ️ No services to disable");
-    return;
-  }
-
-  // Iterate through selected APIs and disable one-by-one
-  for (const api of disableApiList) {
-    // We need to disable cloud functions last
-    if (api === Constants.SERVICE_CLOUDFUNCTIONS) {
-      disableFunctions = true;
-    } else {
-      console.log(`ℹ️ Disabling service: ${api}`);
-      await disableService(process.env.GCLOUD_PROJECT, api);
-    }
-  }
-
-  // Finally disable the cloud functions API
-  if (disableFunctions) {
-    console.log(`ℹ️ Disabling service: ${Constants.SERVICE_CLOUDFUNCTIONS}`);
-    await disableService(
-      process.env.GCLOUD_PROJECT,
-      Constants.SERVICE_CLOUDFUNCTIONS
-    );
-  }
 };
 
 /**
