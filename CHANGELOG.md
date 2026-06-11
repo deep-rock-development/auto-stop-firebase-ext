@@ -4,7 +4,7 @@ Release Date: 11 June 2026
 
 ### Breaking Changes
 
-- **Removed Strategy 2 (Service/API disablement)**, including the `DISABLE_API_LIST` parameter. Billing account removal is now the sole stop strategy.
+- **Removed Strategy 2 (Service/API disablement)**, including the `DISABLE_API_LIST` parameter. Billing account removal is now the sole stop strategy. TL;DR - This is due to Service Usage API changes and to steer users towards the more stable and safe option of billing account removal.
 
 **Why was Strategy 2 removed?**
 
@@ -18,7 +18,11 @@ This restriction is documented in Google's [Manage service enablement](https://d
 
 The enforcement is server-side with no override parameter (`disableDependentServices` and `checkIfServiceHasUsage` cover dependent services and 30-day usage, not live resources), and appeared alongside Google's November 2025 Service Usage changes ([release notes](https://docs.cloud.google.com/service-usage/docs/release-notes)). Since the extension cannot disable an API while that service's resources exist — including its own Cloud Functions — Strategy 2 can no longer work reliably, and deleting user resources is out of scope for this extension. Billing account removal remains the reliable cost-stop mechanism and is unaffected.
 
-**Migration**: No action is required. Installs that had Strategy 2 configured will continue to stop costs via billing account removal (if `DISABLE_BILLING` is enabled). The `roles/serviceusage.serviceUsageAdmin` grant is no longer needed and can be revoked from the extension's service account.
+**Migration**:
+
+- If `DISABLE_BILLING` is set to **Yes** (the default): no action is required. Costs are stopped via billing account removal, exactly as before.
+- ⚠️ If you used Strategy 2 with `DISABLE_BILLING` set to **No**: after updating, the extension will take **no action** when your budget threshold is reached. You must reconfigure the extension with `DISABLE_BILLING` set to Yes to retain cost protection (or uninstall the extension if you no longer want it).
+- The `roles/serviceusage.serviceUsageAdmin` grant is no longer needed and can be revoked from the extension's service account.
 
 ### Other Changes
 
