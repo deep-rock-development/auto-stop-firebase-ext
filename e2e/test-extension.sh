@@ -3,7 +3,7 @@
 # Exit on any error
 set -e
 
-# Always operate from the repository root (this script lives in test/);
+# Always operate from the repository root (this script lives in e2e/);
 # firebase deploy and the extensions/ env dir are resolved relative to it.
 cd "$(dirname "$0")/.."
 
@@ -98,7 +98,7 @@ MAX_RETRIES=3
 WAIT_TIME=30
 
 # Single config template (API-disable strategy removed in 2.0.0)
-CONFIG_TEMPLATE="test/extension-s1-config.template"
+CONFIG_TEMPLATE="e2e/extension-s1-config.template"
 
 # Configure extension parameters
 mkdir -p extensions
