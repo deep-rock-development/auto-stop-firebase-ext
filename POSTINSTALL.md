@@ -7,8 +7,7 @@ For help with installing or using this extension, you can go to the [Auto Stop E
 After the installation of this extension, you must:
 
 - Create a Budget against your project (if none exists), and connect it to the Pub/Sub topic created
-- Assign the extension's service account the `roles/billing.projectManager` role (for Strategy 1)
-- Assign the extension's service account the `roles/serviceusage.serviceUsageAdmin` role (for Strategy 2)
+- Assign the extension's service account the `roles/billing.projectManager` role
 
 Further detail is provided below.
 
@@ -21,9 +20,8 @@ This extension requires the following post-installation steps:
    - **GCP**: Navigate to Billing > Budgets. Create a new budget.
 2. Click the 'View budgets' button, select your budget, and ensure that there is an alert threshold at 100%.
 3. Edit the Budget to connect it to the Pub/Sub topic created by the extension, this is the `TOPIC_NAME` you set. The setting is 'Connect a Pub/Sub topic to this budget' when editing.
-4. Under the IAM service in GCP, assign the extension's service account (`ext-functions-auto-stop-billing@{PROJECT_ID}.iam.gserviceaccount.com`) the relevant IAM roles:
-   - **Strategy 1**: Project Billing Manager (`roles/billing.projectManager`)
-   - **Strategy 2**: Service Usage Admin (`roles/serviceusage.serviceUsageAdmin`)
+4. Under the IAM service in GCP, assign the extension's service account (`ext-functions-auto-stop-billing@{PROJECT_ID}.iam.gserviceaccount.com`) the relevant IAM role:
+   - Project Billing Manager (`roles/billing.projectManager`)
 
 ### How it all works
 
@@ -47,7 +45,7 @@ The budget will generate messages and send them to the topic, these messages are
 }
 ```
 
-The field `alertThresholdExceeded` is monitored by the extension, and will determine whether or not to take action. Where the value of this field meets or exceeds the parameter `BUDGET_STOP_THRESHOLD_PERCENT` then the strategy is executed. If this field is not present, the extension will not take action.
+The field `alertThresholdExceeded` is monitored by the extension, and will determine whether or not to take action. Where the value of this field meets or exceeds the parameter `BUDGET_STOP_THRESHOLD_PERCENT` then the billing account is removed. If this field is not present, the extension will not take action.
 
 ### Testing permissions
 
@@ -69,7 +67,7 @@ This extension is aimed at supporting Firebase users to prevent cost-overrun. Th
 - Even with this extension, you should monitor your Google Cloud costs and usage through the Google Cloud Console.
 - Please consider capturing your configuration through your code repository (versus click ops).
 
-> ⚠️ **Important**: Both strategies will disrupt your application. Plan accordingly and test in non-production environments first.
+> ⚠️ **Important**: Stopping billing will disrupt your application. Plan accordingly and test in non-production environments first.
 
 > ⚠️ **Important**: Google Cloud and Firebase report usage and cost at varying time intervals - this is platform behaviour. Therefore, expect billing information to be delayed and therefore some additional costs above your budget before services are stopped.
 

@@ -3,7 +3,12 @@
 # Exit on any error
 set -e
 
+# Always operate from the repository root (this script lives in e2e/);
+# firebase deploy and the extensions/ env dir are resolved relative to it.
+cd "$(dirname "$0")/.."
+
 TEST_MODE=0
+KEEP_PROJECT=false
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -15,10 +20,15 @@ while [[ $# -gt 0 ]]; do
             BILLING_ID="${1#*=}"
             shift
             ;;
+        --keep-project)
+            KEEP_PROJECT=true
+            shift
+            ;;
         -h|--help)
-            echo "Usage: $0 [--test=1] [--prefix=custom-prefix]"
+            echo "Usage: $0 [--test=1] [--keep-project]"
             echo "  --test=1    Define which test should be run (default: 0 - Install only)"
             echo "  --billing-id=your-billing-id  Set the billing account ID for the project"
+            echo "  --keep-project  Keep the test project after the run (default: delete, even on failure)"
             exit 0
             ;;
         *)
@@ -35,6 +45,33 @@ if [[ -z "$BILLING_ID" || -z "$TEST_MODE" ]]; then
     exit 1
 fi
 
+# Install-only mode keeps the project (nothing to inspect otherwise)
+if [ "$TEST_MODE" -eq 0 ]; then
+    KEEP_PROJECT=true
+fi
+
+# Delete the test project on ANY exit (success or failure) unless --keep-project.
+# Leaked fb-test-asb-* projects count against the billing-account link quota,
+# which silently breaks all future extension installs once exceeded.
+cleanup() {
+    EXIT_CODE=$?
+    if [[ -z "$PROJECT_ID" ]]; then
+        return
+    fi
+    if [[ "$KEEP_PROJECT" == "true" ]]; then
+        echo "ℹ️ Keeping project $PROJECT_ID (delete manually: gcloud projects delete $PROJECT_ID --quiet)"
+        return
+    fi
+    if [[ $EXIT_CODE -ne 0 ]]; then
+        echo "Run failed (exit $EXIT_CODE). Deleting project $PROJECT_ID — rerun with --keep-project to inspect failures."
+    else
+        echo "Cleaning up resources..."
+    fi
+    gcloud projects delete "$PROJECT_ID" --quiet \
+        || echo "WARNING: could not delete $PROJECT_ID — delete it manually (billing quota risk)"
+}
+trap cleanup EXIT
+
 
 # Create GCP project with firebase added
 PROJECT_ID="fb-test-asb-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -c1-8)"
@@ -44,27 +81,38 @@ firebase projects:create $PROJECT_ID --non-interactive
 # Link the project to the static billing account
 gcloud billing projects link $PROJECT_ID --billing-account=$BILLING_ID
 
+# Pre-provision the Cloud Functions service agent and grant it Artifact Registry
+# read access. On fresh projects the auto-grant races with the first deploy,
+# causing: "Unable to retrieve the repository metadata for .../gcf-artifacts"
+gcloud services enable cloudfunctions.googleapis.com artifactregistry.googleapis.com --project=$PROJECT_ID
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
+gcloud beta services identity create --service=cloudfunctions.googleapis.com --project=$PROJECT_ID || true
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:service-${PROJECT_NUMBER}@gcf-admin-robot.iam.gserviceaccount.com" \
+  --role="roles/artifactregistry.reader" --condition=None --quiet > /dev/null
+
 # Deploy extension with retry logic (IAM propagation can take a while)
 echo "Deploying extension with retry logic..."
 RETRY_COUNT=0
 MAX_RETRIES=3
 WAIT_TIME=30
 
-# Get right config template based on test mode, if test mode is >= 4 use s2, otherwise use s1
-if [ "$TEST_MODE" -ge 4 ]; then
-    echo "Using extension config for S2 tests."
-    CONFIG_TEMPLATE="extension-s2-config.template"
-else
-    echo "Using extension config for S1 tests."
-    CONFIG_TEMPLATE="extension-s1-config.template"
-fi
+# Single config template (API-disable strategy removed in 2.0.0)
+CONFIG_TEMPLATE="e2e/extension-s1-config.template"
 
 # Configure extension parameters
 mkdir -p extensions
 cp -f $CONFIG_TEMPLATE ./extensions/functions-auto-stop-billing.env
 
+# Capture full deploy output so failures are diagnosable after the fact
+mkdir -p logs
+DEPLOY_LOG="logs/${PROJECT_ID}-deploy.log"
+
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    if firebase deploy --force --project $PROJECT_ID; then
+    echo "===== deploy attempt $((RETRY_COUNT + 1))/$MAX_RETRIES =====" >> "$DEPLOY_LOG"
+    firebase deploy --force --project $PROJECT_ID 2>&1 | tee -a "$DEPLOY_LOG"
+    DEPLOY_STATUS=${PIPESTATUS[0]}
+    if [ $DEPLOY_STATUS -eq 0 ]; then
         echo "Firebase deploy successful!"
         break
     else
@@ -74,6 +122,8 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
             sleep $WAIT_TIME
         else
             echo "Deploy failed after $MAX_RETRIES attempts."
+            echo "===== last 40 lines of $DEPLOY_LOG ====="
+            tail -40 "$DEPLOY_LOG"
             exit 1
         fi
     fi
@@ -83,7 +133,7 @@ done
 gcloud billing budgets create \
   --billing-account=$BILLING_ID \
   --display-name="$PROJECT_ID-budget" \
-  --budget-amount=5USD \
+  --budget-amount=5 \
   --threshold-rule=percent=0.5,basis=CURRENT_SPEND \
   --threshold-rule=percent=0.9,basis=CURRENT_SPEND \
   --threshold-rule=percent=1.0,basis=CURRENT_SPEND \
@@ -91,10 +141,9 @@ gcloud billing budgets create \
   --notifications-rule-pubsub-topic=projects/$PROJECT_ID/topics/ext-firebase-trigger-auto-stop \
   --project=$PROJECT_ID
 
-# Find the extension service account and assign roles/billing.projectManager and roles/serviceusage.service
+# Find the extension service account and assign roles/billing.projectManager
 SERVICE_ACCOUNT=$(gcloud iam service-accounts list --format="value(email)" --filter="email~ext-functions-auto-stop" --project=$PROJECT_ID)
 gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SERVICE_ACCOUNT" --role="roles/billing.projectManager" --project=$PROJECT_ID
-gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SERVICE_ACCOUNT" --role="roles/serviceusage.serviceUsageAdmin" --project=$PROJECT_ID
 
 # Publish a message to the pub/sub topic
 MESSAGE='{"budgetDisplayName":"'$PROJECT_ID'-budget","extensionTest":true}'
@@ -159,106 +208,11 @@ case "$TEST_MODE" in
         fi
         echo "TEST 3: [SUCCESS] - Billing account is still linked"
         ;;
-    4)
-        echo "TEST 4: [STARTED] - Test disable all APIs (some enabled, some not)"
-        # Send a message to the pub/sub topic to trigger the function
-        echo "TEST 4: [RUNNING] - Sending alert with threshold to trigger disable"
-        MESSAGE='{"budgetDisplayName":"'$PROJECT_ID'-budget","alertThresholdExceeded":1.0,"testMode":4}'
-        gcloud pubsub topics publish ext-firebase-trigger-auto-stop --message="$MESSAGE" --project=$PROJECT_ID
-
-        sleep 30
-
-        # Get list of currently enabled APIs
-        ENABLED_APIS=$(gcloud services list --enabled --format="value(config.name)" --project=$PROJECT_ID)
-        echo $ENABLED_APIS
-        # APIs that should be disabled
-        DISABLED_API_LIST="firebasestorage.googleapis.com,cloudfunctions.googleapis.com,firestore.googleapis.com,firebasehosting.googleapis.com,firebasedatabase.googleapis.com,firebaseml.googleapis.com,mlkit.googleapis.com,firebasevertexai.googleapis.com,speech.googleapis.com,fcm.googleapis.com,identitytoolkit.googleapis.com,firebaseextensions.googleapis.com,pubsub.googleapis.com,compute.googleapis.com,storage.googleapis.com"
-        
-        # Check if any of the APIs from the disable list are still enabled
-        FOUND_ENABLED=false
-        IFS=',' read -ra APIS <<< "$DISABLED_API_LIST"
-        for api in "${APIS[@]}"; do
-            if echo "$ENABLED_APIS" | grep -Fx "$api" > /dev/null; then
-                echo "TEST 4: [FAILED] - API $api is still enabled"
-                FOUND_ENABLED=true
-            fi
-        done
-        
-        if [ "$FOUND_ENABLED" = true ]; then
-            echo "TEST 4: [FAILED] - Some APIs that should be disabled are still enabled"
-            exit 1
-        else
-            echo "TEST 4: [SUCCESS] - All specified APIs have been disabled"
-        fi
-        ;;
-    5)
-        echo "TEST 5: [STARTED] - Disable ALL APIs (all enabled)"
-
-        # enable the APIs first
-        echo "TEST 5: [RUNNING] - Enabling APIs before testing disable"
-        API_LIST="firebasestorage.googleapis.com,cloudfunctions.googleapis.com,firestore.googleapis.com,firebasehosting.googleapis.com,firebasedatabase.googleapis.com,firebaseml.googleapis.com,mlkit.googleapis.com,firebasevertexai.googleapis.com,speech.googleapis.com,fcm.googleapis.com,identitytoolkit.googleapis.com,firebaseextensions.googleapis.com,pubsub.googleapis.com,compute.googleapis.com,storage.googleapis.com"
-        
-        # Enable APIs one by one
-        IFS=',' read -ra APIS <<< "$API_LIST"
-        for api in "${APIS[@]}"; do
-            echo "Enabling $api..."
-            gcloud services enable "$api" --project=$PROJECT_ID
-        done
-
-        # Check APIs are enabled
-        ENABLED_APIS=$(gcloud services list --enabled --format="value(config.name)" --project=$PROJECT_ID)
-        
-        FOUND_ENABLED=false
-        IFS=',' read -ra APIS <<< "$API_LIST"
-        for api in "${APIS[@]}"; do
-            if ! echo "$ENABLED_APIS" | grep -Fx "$api" > /dev/null; then
-                echo "TEST 5: [FAILED] - API $api is not enabled"
-                FOUND_ENABLED=true
-            fi
-        done
-        
-        # Send a message to the pub/sub topic to trigger the function
-        echo "TEST 5: [RUNNING] - Sending alert with threshold to trigger disable"
-        MESSAGE='{"budgetDisplayName":"'$PROJECT_ID'-budget","alertThresholdExceeded":1.0,"testMode":4}'
-        gcloud pubsub topics publish ext-firebase-trigger-auto-stop --message="$MESSAGE" --project=$PROJECT_ID
-
-        sleep 30
-
-        # Get list of currently enabled APIs
-        ENABLED_APIS=$(gcloud services list --enabled --format="value(config.name)" --project=$PROJECT_ID)
-        
-        # Check if any of the APIs from the disable list are still enabled
-        FOUND_ENABLED=false
-        IFS=',' read -ra APIS <<< "$API_LIST"
-        for api in "${APIS[@]}"; do
-            if echo "$ENABLED_APIS" | grep -Fx "$api" > /dev/null; then
-                echo "TEST 5: [FAILED] - API $api is still enabled"
-                FOUND_ENABLED=true
-            fi
-        done
-        
-        if [ "$FOUND_ENABLED" = true ]; then
-            echo "TEST 5: [FAILED] - Some APIs that should be disabled are still enabled"
-            exit 1
-        else
-            echo "TEST 5: [SUCCESS] - All specified APIs have been disabled"
-        fi
-        ;;
     *)
         echo "Unknown test mode: $TEST_MODE"
         exit 1
         ;;
 esac
 
-# If test mode is 0, skip cleanup
-if [ "$TEST_MODE" -eq 0 ]; then
-    echo "Skipping cleanup as test mode is 0 (installation only)."
-    exit 0
-fi
-
-# Clean up resources (close project)
-echo "Cleaning up resources..."
-gcloud projects delete $PROJECT_ID --quiet
-
-
+# Cleanup is handled by the EXIT trap (see cleanup() above)
 echo "Script execution completed!"

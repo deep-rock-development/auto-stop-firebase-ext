@@ -2,13 +2,15 @@
   "name": "auto-stop-firebase-ext",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": "22"
+  },
   "dependencies": {
     "@google-cloud/billing": "^4.3.0",
     "@google-cloud/billing-budgets": "^5.2.0",
     "@google-cloud/functions-framework": "^3.3.0",
     "@google-cloud/pubsub": "^4.3.2",
     "@google-cloud/resource-manager": "^5.1.0",
-    "@google-cloud/service-usage": "^3.2.0",
     "firebase-admin": "^11.5.0",
     "firebase-functions": "^4.7.0",
     "assert": "^2.1.0"
@@ -17,14 +19,11 @@
     "eslint": "^8.15.1",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-promise": "^6.0.0",
-    "firebase-functions-test": "^3.1.1",
-    "mocha": "^10.3.0"
+    "eslint-plugin-promise": "^6.0.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 ..",
-    "lint:fix": "./node_modules/.bin/eslint --max-warnings=0 --fix ..",
-    "test": "mocha --reporter spec"
+    "lint:fix": "./node_modules/.bin/eslint --max-warnings=0 --fix .."
   },
   "private": true
 }
