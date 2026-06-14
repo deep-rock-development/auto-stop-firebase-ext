@@ -1,4 +1,4 @@
-For help with installing or using this extension, you can go to the [Auto Stop Extension Documentation](https://deep-rock.gitbook.io/auto-stop-services).
+For help with installing or using this extension, you can go to the [Auto Stop Extension Documentation](https://deep-rock-development.github.io/auto-stop-firebase-ext).
 
 > 💡 Due to Firebase Extensions limitations, you must manually setup the budget and IAM role assignment. In future, where limitations are removed, this extension will be updated.
 
@@ -77,4 +77,4 @@ This extension is open source and welcomes contributions:
 
 - ➡️ **Repository**: [GitHub Repository](https://github.com/deep-rock-development/auto-stop-firebase-ext)
 - 🐛 **Bug reports**: [File an issue](https://github.com/deep-rock-development/auto-stop-firebase-ext/issues)
-- 📖 **Documentation**: [Auto Stop Extension Documentation](https://deep-rock.gitbook.io/auto-stop-services)
+- 📖 **Documentation**: [Auto Stop Extension Documentation](https://deep-rock-development.github.io/auto-stop-firebase-ext)

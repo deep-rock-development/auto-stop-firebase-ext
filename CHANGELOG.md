@@ -16,7 +16,7 @@ This restriction is documented in Google's [Manage service enablement](https://d
 
 > "Existing resources might prevent you from disabling a service. You can delete these resources and try to disable the service again."
 
-The enforcement is server-side with no override parameter (`disableDependentServices` and `checkIfServiceHasUsage` cover dependent services and 30-day usage, not live resources), and appeared alongside Google's November 2025 Service Usage changes ([release notes](https://docs.cloud.google.com/service-usage/docs/release-notes)). Since the extension cannot disable an API while that service's resources exist — including its own Cloud Functions — Strategy 2 can no longer work reliably, and deleting user resources is out of scope for this extension. Billing account removal remains the reliable cost-stop mechanism and is unaffected.
+The enforcement is server-side with no override parameter (`disableDependentServices` and `checkIfServiceHasUsage` cover dependent services and 30-day usage, not live resources), and appeared alongside Google's November 2025 Service Usage changes ([release notes](https://docs.cloud.google.com/service-usage/docs/release-notes)). Since the extension cannot disable an API while that service's resources exist, including its own Cloud Functions, Strategy 2 can no longer work reliably, and deleting user resources is out of scope for this extension. Billing account removal remains the reliable cost-stop mechanism and is unaffected.
 
 **Migration**:
 
