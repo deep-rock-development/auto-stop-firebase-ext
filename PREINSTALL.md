@@ -72,4 +72,4 @@ This extension is open source and welcomes contributions:
 
 - ➡️ **Repository**: [GitHub Repository](https://github.com/deep-rock-development/auto-stop-firebase-ext)
 - 🐛 **Bug reports**: [File an issue](https://github.com/deep-rock-development/auto-stop-firebase-ext/issues)
-- 📖 **Documentation**: [Auto Stop Extension Documentation](https://deep-rock.gitbook.io/auto-stop-services)
+- 📖 **Documentation**: [Auto Stop Extension Documentation](https://deep-rock-development.github.io/auto-stop-firebase-ext)
