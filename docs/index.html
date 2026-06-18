@@ -1,0 +1,136 @@
+---
+layout: default
+kind: home
+title: Home
+---
+
+<header>
+  <div class="wrap">
+    <div class="label eyebrow r">Firebase Extension</div>
+    <h1 class="r r2">Stop Firebase spending at the budget you set.</h1>
+    <p class="sub r r3">When your project's cost reaches a budget threshold you define, Auto Stop Services removes the billing account, which suspends paid services. Cloud billing alerts notify you but take no action on their own. Your data is preserved, and you restore service by reconnecting billing.</p>
+    <div class="actions r r4">
+      <a class="btn primary" href="https://extensions.dev/extensions/kurtweston/functions-auto-stop-billing">Install from Extensions Hub</a>
+      <a class="btn secondary" href="how-it-works.html">Read the docs</a>
+    </div>
+    <div class="spec r r4">
+      <span><b>Version</b> 2.0.0</span>
+      <span><b>License</b> Apache-2.0</span>
+      <span><b>Runtime</b> Node.js 22</span>
+      <span><b>Source</b> open source</span>
+    </div>
+  </div>
+</header>
+
+<section id="how">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">01 / How it works</div>
+      <h2>The flow.</h2>
+      <p>You set a dollar budget and a stop threshold (default 100%). Google Cloud tracks the spend; the extension takes the action when the threshold is reached.</p>
+    </div>
+
+    <div class="diagram r">
+      <svg viewBox="40 110 940 105" role="img" aria-label="Flow diagram: a billing alert pushes a message to Cloud Pub/Sub, a Cloud Function subscribes and checks the threshold, then calls the Cloud Billing API to remove the billing account.">
+        <defs>
+          <polygon id="hex" points="-34,0 -17,-29.4 17,-29.4 34,0 17,29.4 -17,29.4"/>
+          <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#9aa0a6"/></marker>
+        </defs>
+
+        <line x1="124" y1="150" x2="232" y2="150" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="178" y="173" font-size="13" fill="#6f6b66" text-anchor="middle" font-family="JetBrains Mono, monospace">push</text>
+        <line x1="320" y1="150" x2="438" y2="150" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="379" y="173" font-size="13" fill="#6f6b66" text-anchor="middle" font-family="JetBrains Mono, monospace">subscribe</text>
+        <line x1="526" y1="150" x2="672" y2="150" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="599" y="173" font-size="13" fill="#6f6b66" text-anchor="middle" font-family="JetBrains Mono, monospace">act</text>
+
+        <circle class="pulse trail" cx="119" cy="150" r="9" fill="#e5484d"/>
+        <circle class="pulse" cx="119" cy="150" r="5.5" fill="#e5484d"/>
+
+        <g transform="translate(85,150)">
+          <circle r="34" fill="#1a73e8"/>
+          <rect x="-17" y="-11" width="34" height="22" rx="3" fill="#fff"/>
+          <rect x="-17" y="-5" width="34" height="6" fill="#1a73e8"/>
+          <circle cx="9" cy="6" r="4" fill="#aecbfa"/>
+          <circle cx="24" cy="-24" r="11" fill="#e5484d"/>
+          <rect x="22.7" y="-30" width="2.6" height="8" rx="1.3" fill="#fff"/>
+          <circle cx="24" cy="-19.5" r="1.6" fill="#fff"/>
+          <text x="0" y="58" font-size="15" fill="#191817" text-anchor="middle" font-family="Hanken Grotesk, sans-serif">Billing alert</text>
+        </g>
+
+        <g transform="translate(280,150)">
+          <use href="#hex" fill="#1a73e8"/>
+          <g stroke="#fff" stroke-width="2.4"><line x1="0" y1="0" x2="0" y2="-14"/><line x1="0" y1="0" x2="-12" y2="9"/><line x1="0" y1="0" x2="12" y2="9"/></g>
+          <circle r="5.5" fill="#fff"/><circle cx="0" cy="-15" r="4" fill="#fff"/><circle cx="-13" cy="10" r="4" fill="#fff"/><circle cx="13" cy="10" r="4" fill="#fff"/>
+          <text x="0" y="58" font-size="15" fill="#191817" text-anchor="middle" font-family="Hanken Grotesk, sans-serif">Pub/Sub</text>
+        </g>
+
+        <g transform="translate(486,150)">
+          <use href="#hex" fill="#1a73e8"/>
+          <text x="-16" y="8" font-size="24" fill="#fff" text-anchor="middle" font-family="JetBrains Mono, monospace">(</text>
+          <text x="16" y="8" font-size="24" fill="#fff" text-anchor="middle" font-family="JetBrains Mono, monospace">)</text>
+          <circle cx="-7" r="2.4" fill="#fff"/><circle cx="0" r="2.4" fill="#fff"/><circle cx="7" r="2.4" fill="#fff"/>
+          <text x="0" y="58" font-size="15" fill="#191817" text-anchor="middle" font-family="Hanken Grotesk, sans-serif">Function</text>
+        </g>
+
+        <g transform="translate(720,150)">
+          <use href="#hex" fill="#1a73e8"/>
+          <polygon points="-13,0 -6.5,-11.3 6.5,-11.3 13,0 6.5,11.3 -6.5,11.3" fill="none" stroke="#fff" stroke-width="2.4"/>
+          <circle r="3.4" fill="#fff"/>
+          <text x="0" y="58" font-size="15" fill="#191817" text-anchor="middle" font-family="Hanken Grotesk, sans-serif">Billing API</text>
+        </g>
+
+        <text x="775" y="144" font-size="14" fill="#6f6b66" font-family="Hanken Grotesk, sans-serif">Removes the billing</text>
+        <text x="775" y="163" font-size="14" fill="#6f6b66" font-family="Hanken Grotesk, sans-serif">account from the project</text>
+      </svg>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Budget alert</h3><p>Your Cloud Billing budget fires an alert as spend crosses each threshold.</p></div>
+      <div class="step"><div class="n">02</div><h3>Pub/Sub</h3><p>The alert lands on a topic the extension creates when you install it.</p></div>
+      <div class="step"><div class="n">03</div><h3>The function checks</h3><p>A Cloud Function compares the alert to your stop threshold. Below it, nothing happens.</p></div>
+      <div class="step"><div class="n">04</div><h3>Billing removed</h3><p>At or above it, the billing account is detached and paid services stop.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">02 / Why it exists</div>
+      <h2>Alerts notify, they don't act.</h2>
+    </div>
+    <div class="why">
+      <p>Firebase billing is usage based, so a bug such as a recursive function or a missing auth check, or outright abuse, can increase spend quickly. Google's budget alerts email you when a threshold is crossed, but they do not stop anything on their own (<a href="https://www.reddit.com/r/Firebase/comments/17mv8r0/Firebase_bill_of_121000_for_last_2_days/">large unexpected bills are a documented risk</a>).</p>
+      <p>This extension provides the missing step: it removes the billing account when your threshold is reached. <b>Your data is preserved</b> (storage, Firestore and config remain), so recovery is a matter of fixing the cause and reconnecting billing.</p>
+    </div>
+  </div>
+</section>
+
+<section id="v2">
+  <div class="wrap">
+    <div class="notice">
+      <div class="label">Note for version 2.0.0</div>
+      <h3>API disablement (Strategy 2) has been removed.</h3>
+      <p>Google's Service Usage API no longer disables a service that still has live resources, and there is no flag to override it:</p>
+      <span class="err">FAILED_PRECONDITION: Resources are found when disabling service(s)... please delete the following resources first</span>
+      <p>Billing account removal was always the recommended approach and is now the only one. Full reasoning and migration notes are in the <a href="https://github.com/deep-rock-development/auto-stop-firebase-ext/blob/main/CHANGELOG.md">CHANGELOG</a>. If you run 1.x with <code>DISABLE_BILLING</code> set to No, switch it to Yes when you update.</p>
+    </div>
+  </div>
+</section>
+
+<section id="docs">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">03 / Documentation</div>
+      <h2>Documentation.</h2>
+      <p>Setup takes about ten minutes, including the budget and one IAM grant. The whole thing is four short pages.</p>
+    </div>
+    <div class="doclist">
+      <a class="item" href="how-it-works.html"><span class="num">01</span><div><h3>How it works</h3><p>Budgets, thresholds, and exactly what happens when the extension triggers.</p></div><span class="go">Read</span></a>
+      <a class="item" href="installation.html"><span class="num">02</span><div><h3>Installation</h3><p>Seven steps with screen recordings. Copy and paste commands included.</p></div><span class="go">Read</span></a>
+      <a class="item" href="recovery.html"><span class="num">03</span><div><h3>Recovery</h3><p>Triggered? Find the cause, fix it, raise the budget, reconnect billing.</p></div><span class="go">Read</span></a>
+      <a class="item" href="faq.html"><span class="num">04</span><div><h3>FAQ</h3><p>Billing delays, log noise, what changed in 2.0.0, and where to get help.</p></div><span class="go">Read</span></a>
+    </div>
+  </div>
+</section>

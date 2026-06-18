@@ -70,3 +70,4 @@ node_modules/
 .firebaserc
 
 extensions/
+docs/preview.html

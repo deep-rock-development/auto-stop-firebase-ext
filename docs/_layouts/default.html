@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if page.title and page.url != "/" %}{{ page.title }} · Auto Stop Services{% else %}Auto Stop Services for Firebase{% endif %}</title>
+<meta name="description" content="A Firebase extension that removes your project's billing account when spending reaches the budget you set.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="{{ page.kind | default: 'doc' }}">
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="./">Auto Stop Services <span>/ Firebase</span></a>
+    <div class="nav-links">
+      <a href="how-it-works.html"{% if page.title == "How does it work?" %} class="active"{% endif %}>How it works</a>
+      <a href="installation.html"{% if page.title == "Installation" %} class="active"{% endif %}>Install</a>
+      <a href="recovery.html"{% if page.title == "Recovery" %} class="active"{% endif %}>Recovery</a>
+      <a href="faq.html"{% if page.title == "FAQ" %} class="active"{% endif %}>FAQ</a>
+      <a class="gh" href="https://github.com/deep-rock-development/auto-stop-firebase-ext">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<main class="content">
+{{ content }}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>Built and maintained by <a href="https://github.com/keston-4">Kurt Weston</a></div>
+    <div class="links">
+      <a href="https://github.com/deep-rock-development/auto-stop-firebase-ext">Source</a>
+      <a href="https://github.com/deep-rock-development/auto-stop-firebase-ext/issues">Issues</a>
+      <a href="https://github.com/deep-rock-development/auto-stop-firebase-ext/blob/main/CHANGELOG.md">Changelog</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
