@@ -1,5 +1,5 @@
-// Import the firebase-functions package using ES module syntax
-import * as functions from "firebase-functions";
+// Import the firebase-functions v1 API using ES module syntax
+import * as functions from "firebase-functions/v1";
 import { initializeApp } from "firebase-admin/app";
 import { stopServices, installExtension } from "./service.js";
 
