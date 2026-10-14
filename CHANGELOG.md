@@ -1,3 +1,9 @@
+## Version 2.0.1
+
+Release Date: 1 October 2026
+
+- Updated firebase-functions to v7 and firebase-admin to v14
+
 ## Version 2.0.0
 
 Release Date: 11 June 2026
